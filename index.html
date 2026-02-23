@@ -37,7 +37,6 @@
         .hidden { display: none !important; }
         h1, h2 { color: var(--gold); text-align: center; margin-bottom: 1em; }
         .subtitle { color: #aaa; text-align: center; margin-bottom: 2em; font-size: 1.1rem; }
-
         /* Connexion */
         .login-grid {
             display: grid;
@@ -55,15 +54,14 @@
             transition: all 0.2s;
         }
         .login-card:hover { transform: scale(1.05); border-color: var(--gold); }
-        .login-card .icon { 
-            width: 60px; 
-            height: 60px; 
-            margin: 0 auto 0.8em; 
+        .login-card .icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 0.8em;
         }
         .login-card .icon img { width: 100%; height: 100%; object-fit: contain; }
         .login-card span { font-weight: bold; font-size: 0.95rem; }
-
-        /* Gold + Pièce réaliste (SVG inline) */
+        /* Gold + Pièce réaliste (améliorée) */
         .gold-wrapper {
             display: flex;
             align-items: center;
@@ -77,18 +75,20 @@
             border-radius: 50%;
             overflow: hidden;
             box-shadow: 
-                inset 0 8px 16px rgba(0,0,0,0.7),
-                0 10px 35px rgba(255,215,0,0.6);
-            background: radial-gradient(circle at 35% 35%, #fff8e1, var(--gold) 30%, var(--gold-dark) 70%);
-            border: 6px solid #b8860b;
+                inset 0 6px 12px rgba(0,0,0,0.8),
+                inset 0 -6px 12px rgba(255,255,255,0.12),
+                0 8px 28px rgba(255,215,0,0.55);
+            background: radial-gradient(circle at 38% 38%, #fffdf0, var(--gold) 25%, var(--gold-dark) 65%, #b8860b 100%);
+            border: 5px solid #c99a12;
             position: relative;
         }
         .gold-coin::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent 70%);
+            background: radial-gradient(circle at 32% 32%, rgba(255,255,255,0.55), transparent 65%);
             border-radius: 50%;
+            pointer-events: none;
         }
         .gold-coin svg {
             width: 100%;
@@ -96,9 +96,23 @@
             position: absolute;
             top: 0;
             left: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
         }
         #gold { font-size: 3.2rem; font-weight: bold; }
-
+        /* Effet sur 5000 gold = 800 Robux */
+        .reward-rate {
+            text-align: center;
+            margin: 1.2em 0 1.8em;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-shadow: 0 0 12px rgba(255,215,0,0.7);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.92; text-shadow: 0 0 12px rgba(255,215,0,0.7); }
+            50%      { opacity: 1;    text-shadow: 0 0 24px rgba(255,215,0,1); }
+        }
         .blink {
             color: var(--red);
             font-weight: bold;
@@ -108,7 +122,6 @@
             font-size: 1.1rem;
         }
         @keyframes blink { 50% { opacity: 0.4; } }
-
         /* Boutons */
         button {
             width: 100%;
@@ -125,7 +138,6 @@
         .btn-gray { background: #444; color: white; }
         .btn-gray:hover { background: #555; }
         .btn-blue { background: var(--blue); color: white; }
-
         /* Reward image */
         .reward-img {
             width: 100%;
@@ -136,7 +148,6 @@
             border: 3px solid var(--gold);
             box-shadow: 0 5px 20px rgba(255,215,0,0.4);
         }
-
         /* Responsive */
         @media (max-width: 500px) {
             #container { padding: 16px; }
@@ -147,14 +158,12 @@
     </style>
 </head>
 <body>
-
 <div id="container">
-
     <!-- PAGE CONNEXION -->
     <div id="login">
         <h1>REWARD WEB</h1>
         <p class="subtitle">Rewards financées par des pubs plus vous regardez des pubs plus vous gagnez des récompenses</p>
-        
+       
         <div class="login-grid">
             <div class="login-card" onclick="connect('Google')">
                 <div class="icon">
@@ -180,45 +189,45 @@
     <!-- DASHBOARD -->
     <div id="dashboard" class="hidden">
         <h2>Bienvenue !</h2>
-        
+       
         <div class="gold-wrapper">
-            <!-- Pièce dorée réaliste générée (SVG inline) -->
+            <!-- Pièce dorée améliorée -->
             <div class="gold-coin">
                 <svg viewBox="0 0 100 100" width="100%" height="100%">
                     <defs>
-                        <radialGradient id="goldGrad" cx="35%" cy="35%" r="80%">
-                            <stop offset="0%" stop-color="#fff8e1"/>
-                            <stop offset="40%" stop-color="#ffd700"/>
-                            <stop offset="70%" stop-color="#d4a017"/>
+                        <radialGradient id="goldGrad" cx="38%" cy="38%" r="85%">
+                            <stop offset="0%" stop-color="#fffdf0"/>
+                            <stop offset="28%" stop-color="#ffe94d"/>
+                            <stop offset="62%" stop-color="#ffd700"/>
+                            <stop offset="92%" stop-color="#d4a017"/>
                             <stop offset="100%" stop-color="#b8860b"/>
                         </radialGradient>
-                        <filter id="glow">
-                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <filter id="softGlow">
+                            <feGaussianBlur stdDeviation="2.8" result="glow"/>
                             <feMerge>
-                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="glow"/>
                                 <feMergeNode in="SourceGraphic"/>
                             </feMerge>
                         </filter>
                     </defs>
-                    <circle cx="50" cy="50" r="45" fill="url(#goldGrad)" filter="url(#glow)" stroke="#b8860b" stroke-width="6"/>
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="#ffffff44" stroke-width="4"/>
-                    <text x="50" y="68" font-family="Georgia, serif" font-size="60" font-weight="bold" fill="#1a1a00" text-anchor="middle" stroke="#000" stroke-width="1.5">G</text>
+                    <circle cx="50" cy="50" r="46" fill="url(#goldGrad)" filter="url(#softGlow)" stroke="#c99a12" stroke-width="5.5"/>
+                    <circle cx="50" cy="50" r="39" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="3.5"/>
+                    <text x="50" y="72" font-family="Georgia, serif" font-size="64" font-weight="900" fill="#1a1a00" text-anchor="middle" stroke="#00000088" stroke-width="1.8">G</text>
                 </svg>
             </div>
             <div id="gold">gold : 0</div>
         </div>
-        
+
+        <!-- Effet ajouté ici -->
+        <div class="reward-rate">5000 gold = 800 Robux</div>
+       
         <div class="blink">sondage à venir pour décider de la prochaine récompense partagez massivement</div>
-
         <button class="btn-green" onclick="watchAd()">Regarder pub (+20 gold)</button>
-
         <h3>Joue (max 5 gold/min)</h3>
         <button class="btn-gray" onclick="playGame('pong')">Pong</button>
         <button class="btn-gray" onclick="playGame('snake')">Snake</button>
-
         <button class="btn-gray" onclick="show('rewards')">Récompenses</button>
         <button class="btn-gray" onclick="show('cgu')">CGU</button>
-
         <button onclick="logout()" style="margin-top:2em; background:none; border:none; color:#777; cursor:pointer;">
             Déconnexion
         </button>
@@ -228,7 +237,7 @@
     <div id="rewards" class="hidden">
         <h2>Récompenses</h2>
         <p>5000 gold = 800 Robux</p>
-        <img src="roblox-gift.png" 
+        <img src="roblox-gift.png"
              alt="Carte cadeau Roblox 800 Robux" class="reward-img">
         <button class="btn-blue" onclick="withdraw()">Retirer</button>
         <p id="withdraw-msg" style="margin-top:1em; min-height:1.5em;"></p>
@@ -241,7 +250,6 @@
         <p>Rewards financées par des pubs plus vous regardez des pubs plus vous gagnez des récompenses</p>
         <button class="btn-gray" onclick="show('dashboard')">Retour</button>
     </div>
-
 </div>
 
 <script>
@@ -249,11 +257,9 @@
 let gold = parseInt(localStorage.getItem('gold') || '0');
 let connected = localStorage.getItem('connected') === 'true';
 let provider = localStorage.getItem('provider') || '';
-
 // Éléments
 const login = document.getElementById('login');
 const dashboard = document.getElementById('dashboard');
-
 // Connexion simulée
 function connect(prov) {
     alert(`Connexion simulée via ${prov}...`);
@@ -265,24 +271,20 @@ function connect(prov) {
     dashboard.classList.remove('hidden');
     updateGold();
 }
-
 // Déconnexion
 function logout() {
     localStorage.clear();
     location.reload();
 }
-
 // Gold
 function updateGold() {
     document.getElementById('gold').textContent = `gold : ${gold}`;
     localStorage.setItem('gold', gold);
 }
-
 function addGold(amount) {
     gold += amount;
     updateGold();
 }
-
 // Pub simulée
 function watchAd() {
     alert("Pub en cours...");
@@ -291,7 +293,6 @@ function watchAd() {
         alert("+20 gold !");
     }, 2000);
 }
-
 // Retrait
 function withdraw() {
     if (gold < 5000) {
@@ -302,7 +303,6 @@ function withdraw() {
     updateGold();
     document.getElementById('withdraw-msg').textContent = "Retrait demandé (24h)";
 }
-
 // Navigation
 function show(page) {
     login.classList.add('hidden');
@@ -311,7 +311,6 @@ function show(page) {
     document.getElementById('cgu').classList.add('hidden');
     document.getElementById(page).classList.remove('hidden');
 }
-
 // Init
 if (connected) {
     login.classList.add('hidden');
