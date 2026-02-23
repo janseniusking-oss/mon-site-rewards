@@ -8,273 +8,259 @@
         :root {
             --bg: #111;
             --card: #222;
-            --text: #eee;
             --gold: #ffd700;
-            --gold-dark: #d4a017;
             --green: #2ecc71;
-            --red: #e74c3c;
-            --blue: #3498db;
+            --red: #ff4757;
+            --text: #ffffff;
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: system-ui, sans-serif;
-            min-height: 100vh;
-            padding: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-        #container {
-            width: 100%;
-            max-width: 600px;
-            background: var(--card);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
-        }
-        .hidden { display: none !important; }
-        h1, h2 { color: var(--gold); text-align: center; margin-bottom: 1em; }
-        .subtitle { color: #aaa; text-align: center; margin-bottom: 2em; font-size: 1.1rem; }
-        /* Connexion */
-        .login-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 16px;
-            margin: 2em 0;
-        }
-        .login-card {
-            background: #333;
-            border: 1px solid #444;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .login-card:hover { transform: scale(1.05); border-color: var(--gold); }
-        .login-card .icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 0.8em;
-        }
-        .login-card .icon img { width: 100%; height: 100%; object-fit: contain; }
-        .login-card span { font-weight: bold; font-size: 0.95rem; }
-        
-        /* --- SECTION PIÈCE MODIFIÉE --- */
-        .gold-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            margin: 1.8em 0 1.2em;
-        }
-        .gold-coin-new {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            filter: drop-shadow(0 4px 10px rgba(255, 215, 0, 0.4));
-            animation: coin-float 3s ease-in-out infinite;
-        }
-        @keyframes coin-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-        /* ------------------------------ */
 
-        #gold { font-size: 3.2rem; font-weight: bold; text-align: center; }
-        .reward-text {
-            text-align: center;
-            font-size: 1.45rem;
-            font-weight: 700;
-            color: var(--gold);
-            margin: 0.6em 0 1.4em;
-            text-shadow: 0 0 10px rgba(255,215,0,0.6);
-        }
-        .blink {
-            color: var(--red);
-            font-weight: bold;
-            animation: blink 1.5s infinite;
-            text-align: center;
-            margin: 1em 0;
-            font-size: 1.1rem;
-        }
-        @keyframes blink { 50% { opacity: 0.4; } }
-        /* Boutons */
-        button {
-            width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn-green { background: var(--green); color: black; }
-        .btn-green:hover { filter: brightness(1.1); }
-        .btn-gray { background: #444; color: white; }
-        .btn-gray:hover { background: #555; }
-        .btn-blue { background: var(--blue); color: white; }
-        /* Reward image */
-        .reward-img {
-            width: 100%;
-            max-width: 280px;
-            margin: 1.5em auto;
-            display: block;
-            border-radius: 12px;
-            border: 3px solid var(--gold);
-            box-shadow: 0 5px 20px rgba(255,215,0,0.4);
-        }
-        /* Responsive */
-        @media (max-width: 500px) {
-            #container { padding: 16px; }
-            h1 { font-size: 1.8rem; }
-            #gold { font-size: 2.5rem; }
-            .gold-coin-new { width: 80px; height: 80px; }
-            .reward-text { font-size: 1.25rem; }
-        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
+
+        /* Utilitaires */
+        .hidden { display: none !important; }
+        .btn { padding: 12px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; transition: 0.3s; }
+        .btn-green { background: var(--green); color: white; }
+        .btn-gold { background: var(--gold); color: black; }
+        .btn-outline { background: transparent; border: 1px solid var(--text); color: white; }
+
+        /* Connexion */
+        #auth-page { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; }
+        .brand { font-size: 2.5rem; color: var(--gold); font-weight: 900; letter-spacing: 2px; }
+        .subtitle { font-size: 0.9rem; color: #aaa; margin: 15px 0 30px; }
+        .auth-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 350px; }
+        .auth-btn { background: var(--card); border: 1px solid #333; padding: 15px; border-radius: 12px; cursor: pointer; }
+        .auth-btn img { width: 40px; height: 40px; object-fit: contain; }
+
+        /* Dashboard */
+        .header { background: var(--card); padding: 20px; display: flex; align-items: center; border-bottom: 2px solid var(--gold); }
+        .coin-container { display: flex; align-items: center; flex-grow: 1; }
+        .coin { width: 50px; height: 50px; margin-right: 15px; filter: drop-shadow(0 0 5px rgba(255,215,0,0.5)); animation: spin 3s linear infinite; }
+        @keyframes spin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+        .gold-display { font-size: 1.8rem; font-weight: 800; color: var(--gold); }
+        .flash { animation: flash-anim 0.5s; }
+        @keyframes flash-anim { 0% { color: white; } 100% { color: var(--gold); } }
+
+        .urgent-msg { color: var(--red); text-align: center; font-weight: bold; animation: blink 1s infinite; padding: 10px; font-size: 0.8rem; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .container { padding: 15px; }
+        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #333; }
+
+        /* Jeux */
+        canvas { background: #000; width: 100%; height: 200px; border-radius: 8px; border: 1px solid #444; display: block; margin-top: 10px; }
+
+        /* Récompenses */
+        .reward-img { width: 100%; border-radius: 8px; margin: 10px 0; }
+        
+        .footer-nav { font-size: 0.8rem; text-align: center; color: #666; margin-top: 20px; }
     </style>
 </head>
 <body>
-<div id="container">
-    <div id="login">
-        <h1>REWARD WEB</h1>
-        <p class="subtitle">Rewards financées par des pubs plus vous regardez des pubs plus vous gagnez des récompenses</p>
-        
-        <div class="login-grid">
-            <div class="login-card" onclick="connect('Google')">
-                <div class="icon">
-                    <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google">
-                </div>
-                <span>Google</span>
+
+    <!-- PAGE CONNEXION -->
+    <div id="auth-page">
+        <div class="brand">REWARD WEB</div>
+        <p class="subtitle">Rewards financées par des pubs.<br>Plus vous regardez, plus vous gagnez !</p>
+        <div class="auth-grid">
+            <div class="auth-btn" onclick="login('Google')">
+                <img src="https://www.gstatic.com" alt="Google">
             </div>
-            <div class="login-card" onclick="connect('Microsoft')">
-                <div class="icon">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png" alt="Microsoft">
-                </div>
-                <span>Microsoft</span>
+            <div class="auth-btn" onclick="login('Microsoft')">
+                <img src="https://upload.wikimedia.org" alt="Microsoft">
             </div>
-            <div class="login-card" onclick="connect('iCloud')">
-                <div class="icon">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/512px-Apple_logo_black.svg.png" alt="iCloud">
-                </div>
-                <span>iCloud</span>
+            <div class="auth-btn" onclick="login('iCloud')">
+                <img src="https://upload.wikimedia.org" alt="iCloud">
             </div>
         </div>
     </div>
 
+    <!-- DASHBOARD -->
     <div id="dashboard" class="hidden">
-        <h2>Bienvenue !</h2>
-        
-        <div class="gold-wrapper">
-            <img src="https://googleusercontent.com/image_generation_content/1" alt="Pièce d'or" class="gold-coin-new">
-            <div id="gold">gold : 0</div>
+        <div class="header">
+            <div class="coin-container">
+                <svg class="coin" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#fff2a1;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ffd700;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#b8860b;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="45" fill="url(#goldGrad)" stroke="#b8860b" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="35" fill="none" stroke="#b8860b" stroke-width="1" stroke-dasharray="2,2"/>
+                    <text x="50%" y="65%" text-anchor="middle" font-family="Arial" font-size="40" font-weight="bold" fill="#b8860b" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.5)">G</text>
+                </svg>
+                <div class="gold-display" id="gold-val">0</div>
+            </div>
+            <button class="btn btn-outline" style="width: auto;" onclick="logout()">Déconnexion</button>
         </div>
 
-        <div class="reward-text">5000 gold = 800 Robux</div>
-        
-        <div class="blink">sondage à venir pour décider de la prochaine récompense partagez massivement</div>
-        <button class="btn-green" onclick="watchAd()">Regarder pub (+20 gold)</button>
-        <h3>Joue (max 5 gold/min)</h3>
-        <button class="btn-gray" onclick="playGame('pong')">Pong</button>
-        <button class="btn-gray" onclick="playGame('snake')">Snake</button>
-        <button class="btn-gray" onclick="show('rewards')">Récompenses</button>
-        <button class="btn-gray" onclick="show('cgu')">CGU</button>
-        <button onclick="logout()" style="margin-top:2em; background:none; border:none; color:#777; cursor:pointer;">
-            Déconnexion
-        </button>
+        <div class="urgent-msg">sondage à venir pour décider de la prochaine récompense partagez massivement</div>
+
+        <div class="container">
+            <div class="card">
+                <h3>Publicité</h3>
+                <button class="btn btn-green" onclick="watchAd()">Regarder pub (+20 gold)</button>
+            </div>
+
+            <div id="game-section" class="card">
+                <h3>Joue (max 5 gold/min)</h3>
+                <button class="btn btn-gold" onclick="startPong()">Jouer au Pong</button>
+                <button class="btn btn-gold" onclick="startSnake()">Jouer au Snake</button>
+                <canvas id="gameCanvas"></canvas>
+            </div>
+
+            <button class="btn btn-outline" onclick="showSection('rewards')">Récompenses</button>
+            <button class="btn btn-outline" onclick="showSection('cgu')">CGU</button>
+        </div>
     </div>
 
-    <div id="rewards" class="hidden">
-        <h2>Récompenses</h2>
-        <p>5000 gold = 800 Robux</p>
-        <img src="roblox-gift.png" alt="Carte cadeau Roblox 800 Robux" class="reward-img">
-        <button class="btn-blue" onclick="withdraw()">Retirer</button>
-        <p id="withdraw-msg" style="margin-top:1em; min-height:1.5em;"></p>
-        <button class="btn-gray" onclick="show('dashboard')">Retour</button>
+    <!-- MODAL RECOMPENSES -->
+    <div id="rewards-page" class="hidden container" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:100;">
+        <button class="btn btn-outline" onclick="hideSection('rewards')">Retour</button>
+        <h1>Récompenses</h1>
+        <div class="card">
+            <img src="https://upload.wikimedia.org" class="reward-img" style="height: 100px; padding: 20px; background: white;">
+            <h3>800 Robux</h3>
+            <p>Coût : 5000 gold</p>
+            <p id="reward-msg" style="color:var(--red)"></p>
+            <button class="btn btn-green" onclick="claimReward()">Retirer</button>
+        </div>
     </div>
 
-    <div id="cgu" class="hidden">
-        <h2>CGU</h2>
-        <p>Rewards financées par des pubs plus vous regardez des pubs plus vous gagnez des récompenses</p>
-        <button class="btn-gray" onclick="show('dashboard')">Retour</button>
+    <!-- MODAL CGU -->
+    <div id="cgu-page" class="hidden container" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:100; overflow-y: scroll;">
+        <button class="btn btn-outline" onclick="hideSection('cgu')">Retour</button>
+        <h1>CGU</h1>
+        <p>Rewards financées par des pubs plus vous regardez des pubs plus vous gagnez des récompenses. Pas de hasard. Gains fixes. Lois CI. 18+.</p>
+        <p>Ce site est une démo MVP (Minimum Viable Product).</p>
     </div>
-</div>
 
-<script>
-// Variables
-let gold = parseInt(localStorage.getItem('gold') || '0');
-let connected = localStorage.getItem('connected') === 'true';
-let provider = localStorage.getItem('provider') || '';
+    <script>
+        let gold = parseInt(localStorage.getItem('gold')) || 0;
+        let isConnected = localStorage.getItem('connected') === 'true';
+        let canvas = document.getElementById('gameCanvas');
+        let ctx = canvas.getContext('2d');
+        let gameInterval;
+        let lastMinuteGain = Date.now();
 
-const login = document.getElementById('login');
-const dashboard = document.getElementById('dashboard');
+        // Initialisation
+        window.onload = () => {
+            if(isConnected) {
+                showDashboard();
+            }
+            updateUI();
+        };
 
-function connect(prov) {
-    alert(`Connexion simulée via ${prov}...`);
-    localStorage.setItem('connected', 'true');
-    localStorage.setItem('provider', prov);
-    connected = true;
-    provider = prov;
-    login.classList.add('hidden');
-    dashboard.classList.remove('hidden');
-    updateGold();
-}
+        function updateUI() {
+            const el = document.getElementById('gold-val');
+            el.innerText = gold;
+            el.classList.add('flash');
+            setTimeout(() => el.classList.remove('flash'), 500);
+            localStorage.setItem('gold', gold);
+        }
 
-function logout() {
-    localStorage.clear();
-    location.reload();
-}
+        function login(provider) {
+            alert("Connexion via " + provider + " réussie !");
+            localStorage.setItem('connected', 'true');
+            showDashboard();
+        }
 
-function updateGold() {
-    document.getElementById('gold').textContent = `gold : ${gold}`;
-    localStorage.setItem('gold', gold);
-}
+        function logout() {
+            localStorage.clear();
+            location.reload();
+        }
 
-function addGold(amount) {
-    gold += amount;
-    updateGold();
-}
+        function showDashboard() {
+            document.getElementById('auth-page').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+        }
 
-function watchAd() {
-    alert("Pub en cours...");
-    setTimeout(() => {
-        addGold(20);
-        alert("+20 gold !");
-    }, 2000);
-}
+        function watchAd() {
+            alert("Pub en cours... (Simulée)");
+            setTimeout(() => {
+                gold += 20;
+                updateUI();
+                alert("Bravo ! +20 Gold reçus.");
+            }, 2000);
+        }
 
-// Fonction placeholder pour tes jeux (remets ton code de jeu ici si tu l'avais en JS)
-function playGame(gameType) {
-    alert("Lancement du jeu : " + gameType);
-    // Ajoute ta logique de jeu ici
-}
+        // Système de gain passif en jeu
+        function trackPlayTime() {
+            let now = Date.now();
+            if (now - lastMinuteGain >= 60000) {
+                gold += 5;
+                updateUI();
+                lastMinuteGain = now;
+            }
+        }
 
-function withdraw() {
-    if (gold < 5000) {
-        document.getElementById('withdraw-msg').textContent = "Pas assez (min 5000)";
-        return;
-    }
-    gold -= 5000;
-    updateGold();
-    document.getElementById('withdraw-msg').textContent = "Retrait demandé (24h)";
-}
+        // Navigation
+        function showSection(id) { document.getElementById(id + '-page').classList.remove('hidden'); }
+        function hideSection(id) { document.getElementById(id + '-page').classList.add('hidden'); }
 
-function show(page) {
-    login.classList.add('hidden');
-    dashboard.classList.add('hidden');
-    document.getElementById('rewards').classList.add('hidden');
-    document.getElementById('cgu').classList.add('hidden');
-    document.getElementById(page).classList.remove('hidden');
-}
+        function claimReward() {
+            const msg = document.getElementById('reward-msg');
+            if(gold < 5000) {
+                msg.innerText = "Solde insuffisant (5000 gold requis)";
+            } else {
+                gold -= 5000;
+                updateUI();
+                alert("Retrait demandé ! Traitement sous 24h.");
+                msg.style.color = "var(--green)";
+                msg.innerText = "Demande envoyée !";
+            }
+        }
 
-if (connected) {
-    login.classList.add('hidden');
-    dashboard.classList.remove('hidden');
-}
-updateGold();
-</script>
+        // --- MINI JEU : PONG ---
+        function startPong() {
+            clearInterval(gameInterval);
+            let pY = 70, bX = 50, bY = 50, dX = 2, dY = 2;
+            gameInterval = setInterval(() => {
+                ctx.fillStyle = "black"; ctx.fillRect(0,0,300,150);
+                ctx.fillStyle = "white"; ctx.fillRect(10, pY, 10, 40); // Joueur
+                ctx.fillRect(bX, bY, 5, 5); // Balle
+                bX += dX; bY += dY;
+                if(bY < 0 || bY > 145) dY = -dY;
+                if(bX < 0) dX = -dX;
+                if(bX > 290) { // Sort à droite = Gain
+                    gold += 50; updateUI();
+                    bX = 50;
+                }
+                trackPlayTime();
+            }, 30);
+            window.onkeydown = (e) => { if(e.key == "ArrowUp") pY -= 10; if(e.key == "ArrowDown") pY += 10; };
+        }
+
+        // --- MINI JEU : SNAKE ---
+        function startSnake() {
+            clearInterval(gameInterval);
+            let snake = [{x:10, y:10}], food = {x:15, y:15}, dx = 1, dy = 0;
+            gameInterval = setInterval(() => {
+                let head = {x: snake[0].x + dx, y: snake[0].y + dy};
+                if(head.x < 0 || head.x > 29 || head.y < 0 || head.y > 14 || snake.some(s=>s.x==head.x && s.y==head.y)) {
+                    alert("Game Over ! +50 Gold");
+                    gold += 50; updateUI();
+                    return startSnake();
+                }
+                snake.unshift(head);
+                if(head.x == food.x && head.y == food.y) {
+                    food = {x: Math.floor(Math.random()*29), y: Math.floor(Math.random()*14)};
+                } else { snake.pop(); }
+                
+                ctx.fillStyle = "black"; ctx.fillRect(0,0,300,150);
+                ctx.fillStyle = "red"; ctx.fillRect(food.x*10, food.y*10, 8, 8);
+                ctx.fillStyle = "lime"; snake.forEach(s => ctx.fillRect(s.x*10, s.y*10, 8, 8));
+                trackPlayTime();
+            }, 100);
+            window.onkeydown = (e) => {
+                if(e.key == "ArrowUp" && dy==0) {dx=0; dy=-1}
+                if(e.key == "ArrowDown" && dy==0) {dx=0; dy=1}
+                if(e.key == "ArrowLeft" && dx==0) {dx=-1; dy=0}
+                if(e.key == "ArrowRight" && dx==0) {dx=1; dy=0}
+            };
+        }
+    </script>
 </body>
 </html>
