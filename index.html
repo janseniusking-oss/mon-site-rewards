@@ -1,266 +1,431 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REWARD WEB - Gagne Robux Gratuit</title>
-    <style>
-        :root {
-            --bg: #111;
-            --card: #222;
-            --gold: #ffd700;
-            --green: #2ecc71;
-            --red: #ff4757;
-            --text: #ffffff;
-        }
+<!doctype html>  
+<html lang="fr">  
+<head>  
+  <meta charset="utf-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />  
+  <title>REWARD WEB - Gagne Robux Gratuit</title>  
+  <style>  
+    /* ===== CSS Global / Thème sombre gaming ===== */  
+    :root{  
+      --bg: #111;  
+      --card: #222;  
+      --text: #eaeaea;  
+      --muted: #bbbbbb;  
+      --accent: #ffd700; /* gold */  
+      --green: #2ecc71;  /* bouton */  
+      --shadow: 0 6px 18px rgba(0,0,0,.45);  
+    }  
+    * { box-sizing: border-box; }  
+    html, body { margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; }  
+    .container { width: 90%; max-width: 980px; margin: 0 auto; }  
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
+    /* ===== Header / Navigation ===== */  
+    header { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid rgba(255,215,0,.15); background: #111; }  
+    .brand { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; }  
+    .brand h1 { font-size: 1.2rem; margin: 0; letter-spacing: .5px; }  
+    .nav { display: flex; gap: 8px; flex-wrap: wrap; }  
+    .nav button {  
+      background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.15);  
+      padding: 8px 12px; border-radius: 6px; cursor: pointer;  
+    }  
+    .nav button.active { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.4); }  
 
-        /* Utilitaires */
-        .hidden { display: none !important; }
-        .btn { padding: 12px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; transition: 0.3s; }
-        .btn-green { background: var(--green); color: white; }
-        .btn-gold { background: var(--gold); color: black; }
-        .btn-outline { background: transparent; border: 1px solid var(--text); color: white; }
+    /* ===== Début contenu ===== */  
+    main { padding: 18px 0 40px; }  
 
-        /* Connexion */
-        #auth-page { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; }
-        .brand { font-size: 2.5rem; color: var(--gold); font-weight: 900; letter-spacing: 2px; }
-        .subtitle { font-size: 0.9rem; color: #aaa; margin: 15px 0 30px; }
-        .auth-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 350px; }
-        .auth-btn { background: var(--card); border: 1px solid #333; padding: 15px; border-radius: 12px; cursor: pointer; }
-        .auth-btn img { width: 40px; height: 40px; object-fit: contain; }
+    /* ===== Carte générale ===== */  
+    .card { background: var(--card); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); }  
 
-        /* Dashboard */
-        .header { background: var(--card); padding: 20px; display: flex; align-items: center; border-bottom: 2px solid var(--gold); }
-        .coin-container { display: flex; align-items: center; flex-grow: 1; }
-        .coin { width: 50px; height: 50px; margin-right: 15px; filter: drop-shadow(0 0 5px rgba(255,215,0,0.5)); animation: spin 3s linear infinite; }
-        @keyframes spin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-        .gold-display { font-size: 1.8rem; font-weight: 800; color: var(--gold); }
-        .flash { animation: flash-anim 0.5s; }
-        @keyframes flash-anim { 0% { color: white; } 100% { color: var(--gold); } }
+    /* ===== Page de connexion ===== */  
+    #login { display: block; }  
+    #dashboard, #rewards-page, #cgu { display: none; }  
 
-        .urgent-msg { color: var(--red); text-align: center; font-weight: bold; animation: blink 1s infinite; padding: 10px; font-size: 0.8rem; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    .center { text-align: center; }  
+    .title { font-weight: 700; font-size: 1.6rem; margin: 8px 0 6px; letter-spacing: .3px; }  
+    .subtitle { color: var(--muted); margin-bottom: 12px; }  
 
-        .container { padding: 15px; }
-        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #333; }
+    .providers { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; justify-items: center; }  
+    .provider { width: 100px; height: 100px; display: inline-flex; align-items: center; justify-content: center; border-radius: 14px; cursor: pointer; background: #222; border: 1px solid rgba(255,255,255,.15); padding: 6px; }  
+    .provider img { max-width: 100%; max-height: 100%; display: block; }  
 
-        /* Jeux */
-        canvas { background: #000; width: 100%; height: 200px; border-radius: 8px; border: 1px solid #444; display: block; margin-top: 10px; }
+    /* ===== Dashboard ===== */  
+    #dashboard .stage { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: center; }  
 
-        /* Récompenses */
-        .reward-img { width: 100%; border-radius: 8px; margin: 10px 0; }
-        
-        .footer-nav { font-size: 0.8rem; text-align: center; color: #666; margin-top: 20px; }
-    </style>
-</head>
-<body>
+    .gold-counter { display: flex; align-items: center; gap: 12px; justify-content: center; padding: 6px 0; }  
+    .gold-label { font-size: 1.1rem; color: #ffd700; text-shadow: 0 0 8px rgba(255,215,0,.6); }  
+    .gold-value { font-size: 2.4rem; font-weight: 700; color: #ffd700; text-shadow: 0 0 12px rgba(255,215,0,.9); }  
 
-    <!-- PAGE CONNEXION -->
-    <div id="auth-page">
-        <div class="brand">REWARD WEB</div>
-        <p class="subtitle">Rewards financées par des pubs.<br>Plus vous regardez, plus vous gagnez !</p>
-        <div class="auth-grid">
-            <div class="auth-btn" onclick="login('Google')">
-                <img src="https://www.gstatic.com" alt="Google">
-            </div>
-            <div class="auth-btn" onclick="login('Microsoft')">
-                <img src="https://upload.wikimedia.org" alt="Microsoft">
-            </div>
-            <div class="auth-btn" onclick="login('iCloud')">
-                <img src="https://upload.wikimedia.org" alt="iCloud">
-            </div>
-        </div>
-    </div>
+    /* Pièce dorée réaliste (SVG inline) */  
+    .coin-row { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 6px 0; }  
+    .coin { width: 120px; height: 120px; }  
 
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="hidden">
-        <div class="header">
-            <div class="coin-container">
-                <svg class="coin" viewBox="0 0 100 100">
-                    <defs>
-                        <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#fff2a1;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#ffd700;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#b8860b;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <circle cx="50" cy="50" r="45" fill="url(#goldGrad)" stroke="#b8860b" stroke-width="2"/>
-                    <circle cx="50" cy="50" r="35" fill="none" stroke="#b8860b" stroke-width="1" stroke-dasharray="2,2"/>
-                    <text x="50%" y="65%" text-anchor="middle" font-family="Arial" font-size="40" font-weight="bold" fill="#b8860b" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.5)">G</text>
-                </svg>
-                <div class="gold-display" id="gold-val">0</div>
-            </div>
-            <button class="btn btn-outline" style="width: auto;" onclick="logout()">Déconnexion</button>
-        </div>
+    .blink { animation: blink 0.9s infinite; color: #ff4d4d; font-weight: 700; text-align: center; }  
 
-        <div class="urgent-msg">sondage à venir pour décider de la prochaine récompense partagez massivement</div>
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }  
 
-        <div class="container">
-            <div class="card">
-                <h3>Publicité</h3>
-                <button class="btn btn-green" onclick="watchAd()">Regarder pub (+20 gold)</button>
-            </div>
+    /* Boutons du dashboard */  
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px;  
+           background: var(--green); color: #062c13; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer;  
+           font-weight: 700; text-transform: none; text-decoration: none; }  
+    .btn:active { transform: translateY(1px); }  
+    .btn.secondary { background: #333; color: #fff; border: 1px solid rgba(255,255,255,.25); }  
+    .btn.gold { background: #ffd700; color: #2b2b2b; }  
 
-            <div id="game-section" class="card">
-                <h3>Joue (max 5 gold/min)</h3>
-                <button class="btn btn-gold" onclick="startPong()">Jouer au Pong</button>
-                <button class="btn btn-gold" onclick="startSnake()">Jouer au Snake</button>
-                <canvas id="gameCanvas"></canvas>
-            </div>
+    /* Mini-jeux canvases */  
+    .games { display: grid; grid-template-columns: 1fr; gap: 12px; }  
+    canvas { width: 100%; height: 180px; background: #000; border-radius: 8px; display: block; }  
 
-            <button class="btn btn-outline" onclick="showSection('rewards')">Récompenses</button>
-            <button class="btn btn-outline" onclick="showSection('cgu')">CGU</button>
-        </div>
-    </div>
+    /* Section récompenser / CGU */  
+    #rewards-page { padding-top: 8px; }  
+    .reward-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }  
+    .reward-card { padding: 12px; border-radius: 10px; background: #222; border: 1px solid rgba(255,255,255,.15); }  
+    .reward-card h3 { margin: 6px 0; font-size: 1.1rem; }  
+    .gift-img { width: 100%; height: auto; display: block; border-radius: 8px; }  
 
-    <!-- MODAL RECOMPENSES -->
-    <div id="rewards-page" class="hidden container" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:100;">
-        <button class="btn btn-outline" onclick="hideSection('rewards')">Retour</button>
-        <h1>Récompenses</h1>
-        <div class="card">
-            <img src="https://upload.wikimedia.org" class="reward-img" style="height: 100px; padding: 20px; background: white;">
-            <h3>800 Robux</h3>
-            <p>Coût : 5000 gold</p>
-            <p id="reward-msg" style="color:var(--red)"></p>
-            <button class="btn btn-green" onclick="claimReward()">Retirer</button>
-        </div>
-    </div>
+    /* Messages */  
+    .message { padding: 8px 12px; border-radius: 6px; margin: 8px 0; }  
+    .msg-red { background: rgba(239, 68, 68, .2); color: #ffdddd; border: 1px solid rgba(239,68,68,.5); }  
+    .msg-green { background: rgba(46, 204, 113, .2); color: #ddffdd; border: 1px solid rgba(46,204,113,.5); }  
 
-    <!-- MODAL CGU -->
-    <div id="cgu-page" class="hidden container" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:100; overflow-y: scroll;">
-        <button class="btn btn-outline" onclick="hideSection('cgu')">Retour</button>
-        <h1>CGU</h1>
-        <p>Rewards financées par des pubs plus vous regardez des pubs plus vous gagnez des récompenses. Pas de hasard. Gains fixes. Lois CI. 18+.</p>
-        <p>Ce site est une démo MVP (Minimum Viable Product).</p>
-    </div>
+    /* Footer note */  
+    footer { text-align: center; color: var(--muted); padding: 20px 0; font-size: .85rem; }  
 
-    <script>
-        let gold = parseInt(localStorage.getItem('gold')) || 0;
-        let isConnected = localStorage.getItem('connected') === 'true';
-        let canvas = document.getElementById('gameCanvas');
-        let ctx = canvas.getContext('2d');
-        let gameInterval;
-        let lastMinuteGain = Date.now();
+    /* Responsive minimale */  
+    @media (min-width: 720px) {  
+      .stage { grid-template-columns: 1.1fr 0.9fr; }  
+      .games { grid-template-columns: 1fr 1fr; }  
+    }  
+  </style>  
+</head>  
+<body>  
+  <!-- ===== En-tête et navigation ===== -->  
+  <header>  
+    <div class="container brand">  
+      <h1>REWARD WEB</h1>  
+      <nav class="nav" aria-label="Navigation principale">  
+        <button onclick="showPage('login')" id="nav-login" class="active">Connexion</button>  
+        <button onclick="showPage('dashboard')">Dashboard</button>  
+        <button onclick="showPage('rewards-page')">Récompenses</button>  
+        <button onclick="showPage('cgu')">CGU</button>  
+      </nav>  
+    </div>  
+  </header>  
 
-        // Initialisation
-        window.onload = () => {
-            if(isConnected) {
-                showDashboard();
-            }
-            updateUI();
-        };
+  <!-- ===== Page Connexion (première visible) ===== -->  
+  <main class="container" id="login">  
+    <section class="card center" style="padding:20px; border-radius:16px;">  
+      <div class="title" style="font-size:2rem;">REWARD WEB</div>  
+      <div class="subtitle" style="margin-bottom:14px;">  
+        Rewards financées par des pubs plus vous regardez des pubs plus vous gagnez des récompenses  
+      </div>  
 
-        function updateUI() {
-            const el = document.getElementById('gold-val');
-            el.innerText = gold;
-            el.classList.add('flash');
-            setTimeout(() => el.classList.remove('flash'), 500);
-            localStorage.setItem('gold', gold);
-        }
+      <div class="providers" aria-label="Choisir un fournisseur de connexion">  
+        <!-- Logos officiels via CDN publics -->  
+        <div class="provider" data-provider="google" title="Connexion Google">  
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Logo Google" width="60" height="60">  
+        </div>  
+        <div class="provider" data-provider="microsoft" title="Connexion Microsoft">  
+          <img src="https://cdn.jsdelivr.net/gh/leemunjezi/gaming-microsoft-logo/microsoft.png" alt="Logo Microsoft" width="60" height="60" onerror="this.style.display='none'">  
+        </div>  
+        <div class="provider" data-provider="icloud" title="Connexion iCloud">  
+          <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6/icons/icloud.svg" alt="Logo iCloud" width="60" height="60" style="filter: invert(1); opacity:.9;">  
+        </div>  
+      </div>  
 
-        function login(provider) {
-            alert("Connexion via " + provider + " réussie !");
-            localStorage.setItem('connected', 'true');
-            showDashboard();
-        }
+      <p class="subtitle" style="margin-top:12px;">Ou cliquez sur un logo pour simuler une connexion</p>  
+    </section>  
+  </main>  
 
-        function logout() {
-            localStorage.clear();
-            location.reload();
-        }
+  <!-- ===== Dashboard (masqué au départ) ===== -->  
+  <main class="container" id="dashboard" aria-label="Dashboard">  
+    <section class="card stage">  
+      <div class="left" style="display:flex; flex-direction:column; align-items:flex-start;">  
+        <div class="title" style="font-size:1.8rem;">Bienvenue !</div>  
+        <div class="coin-row" aria-label="Pièce dorée">  
+          <!-- Pièce dorée réaliste (SVG inline) -->  
+          <svg class="coin" viewBox="0 0 200 200" role="img" aria-label="Pièce dorée">  
+            <defs>  
+              <radialGradient id="g1" cx="50%" cy="40%" r="60%">  
+                <stop offset="0%" stop-color="#fff6b3"/>  
+                <stop offset="60%" stop-color="#ffd000"/>  
+                <stop offset="100%" stop-color="#d4a200"/>  
+              </radialGradient>  
+              <linearGradient id="metal" x1="0" x2="1" y1="0" y2="1">  
+                <stop offset="0%" stop-color="#fff8a7"/>  
+                <stop offset="50%" stop-color="#ffd000"/>  
+                <stop offset="100%" stop-color="#b8860b"/>  
+              </linearGradient>  
+            </defs>  
+            <circle cx="100" cy="100" r="78" fill="url(#metal)" stroke="#e5c200" stroke-width="6"/>  
+            <circle cx="100" cy="100" r="68" fill="url(#g1)" opacity="0.9"/>  
+            <!-- G en relief -->  
+            <text x="100" y="118" text-anchor="middle" font-family="Georgia, serif" font-size="72" fill="#7a4b00" font-weight="bold" style="paint-order: stroke fill;">  
+              G  
+            </text>  
+            <ellipse cx="100" cy="100" rx="68" ry="68" fill="none" stroke="#f6d365" stroke-width="4" opacity="0.4"/>  
+          </svg>  
 
-        function showDashboard() {
-            document.getElementById('auth-page').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
-        }
+          <div class="gold-counter" id="goldDisplay" title="Gold courant">  
+            <span class="gold-label">gold :</span>  
+            <span class="gold-value" id="goldValue">0</span>  
+          </div>  
+        </div>  
 
-        function watchAd() {
-            alert("Pub en cours... (Simulée)");
-            setTimeout(() => {
-                gold += 20;
-                updateUI();
-                alert("Bravo ! +20 Gold reçus.");
-            }, 2000);
-        }
+        <div class="message msg-red" id="notice" role="status" aria-live="polite" style="display:none;">  
+          sondage à venir pour décider de la prochaine récompense partagez massivement  
+        </div>  
+      </div>  
 
-        // Système de gain passif en jeu
-        function trackPlayTime() {
-            let now = Date.now();
-            if (now - lastMinuteGain >= 60000) {
-                gold += 5;
-                updateUI();
-                lastMinuteGain = now;
-            }
-        }
+      <div class="right" style="display:flex; flex-direction:column; align-items:center; gap:12px;">  
+        <button class="btn" id="watchAdBtn" title="Regarder une pub simulée (+20 gold)">  
+          Regarder pub (+20 gold)  
+        </button>  
+        <div class="games" style="width:100%; max-width:520px;">  
+          <div class="card" style="padding:8px;">  
+            <div style="font-weight:700; text-align:center; margin-bottom:6px;">Joue (max 5 gold/min)</div>  
+            <div style="display:flex; gap:8px; justify-content:space-between;">  
+              <button class="btn secondary" onclick="startPong()">Pong</button>  
+              <button class="btn secondary" onclick="startSnake()">Snake</button>  
+            </div>  
+            <div style="margin-top:8px;">  
+              <canvas id="gameCanvas" width="480" height="180" style="width:100%; height:180px; background:#000; border-radius:6px;"></canvas>  
+            </div>  
+          </div>  
+        </div>  
 
-        // Navigation
-        function showSection(id) { document.getElementById(id + '-page').classList.remove('hidden'); }
-        function hideSection(id) { document.getElementById(id + '-page').classList.add('hidden'); }
+        <div style="display:flex; gap:8px; flex-wrap: wrap;">  
+          <button class="btn" onclick="showPage('rewards-page')">Récompenses</button>  
+          <button class="btn secondary" onclick="showPage('cgu')">CGU</button>  
+          <button class="btn" onclick="logout()">Déconnexion</button>  
+        </div>  
+        <div id="timeRule" class="blink" style="display:none; color:#ff6b6b; font-weight:700;">  
+          Déconnexion automatique si vous n'êtes pas connecté.  
+        </div>  
+      </div>  
+    </section>  
+  </main>  
 
-        function claimReward() {
-            const msg = document.getElementById('reward-msg');
-            if(gold < 5000) {
-                msg.innerText = "Solde insuffisant (5000 gold requis)";
-            } else {
-                gold -= 5000;
-                updateUI();
-                alert("Retrait demandé ! Traitement sous 24h.");
-                msg.style.color = "var(--green)";
-                msg.innerText = "Demande envoyée !";
-            }
-        }
+  <!-- ===== Page Récompenses ===== -->  
+  <main class="container" id="rewards-page" aria-label="Récompenses">  
+    <section class="card" style="text-align:center;">  
+      <div class="title" style="font-size:1.8rem;">Récompenses</div>  
+      <p style="color:var(--muted); margin:6px 0 12px;">  
+        5000 gold = 800 Robux  
+      </p>  
 
-        // --- MINI JEU : PONG ---
-        function startPong() {
-            clearInterval(gameInterval);
-            let pY = 70, bX = 50, bY = 50, dX = 2, dY = 2;
-            gameInterval = setInterval(() => {
-                ctx.fillStyle = "black"; ctx.fillRect(0,0,300,150);
-                ctx.fillStyle = "white"; ctx.fillRect(10, pY, 10, 40); // Joueur
-                ctx.fillRect(bX, bY, 5, 5); // Balle
-                bX += dX; bY += dY;
-                if(bY < 0 || bY > 145) dY = -dY;
-                if(bX < 0) dX = -dX;
-                if(bX > 290) { // Sort à droite = Gain
-                    gold += 50; updateUI();
-                    bX = 50;
-                }
-                trackPlayTime();
-            }, 30);
-            window.onkeydown = (e) => { if(e.key == "ArrowUp") pY -= 10; if(e.key == "ArrowDown") pY += 10; };
-        }
+      <img class="gift-img" src="https://i.imgur.com/9U6QmYt.png" alt="Carte cadeau Roblox (placeholder)" style="max-width:100%; height:auto;">  
 
-        // --- MINI JEU : SNAKE ---
-        function startSnake() {
-            clearInterval(gameInterval);
-            let snake = [{x:10, y:10}], food = {x:15, y:15}, dx = 1, dy = 0;
-            gameInterval = setInterval(() => {
-                let head = {x: snake[0].x + dx, y: snake[0].y + dy};
-                if(head.x < 0 || head.x > 29 || head.y < 0 || head.y > 14 || snake.some(s=>s.x==head.x && s.y==head.y)) {
-                    alert("Game Over ! +50 Gold");
-                    gold += 50; updateUI();
-                    return startSnake();
-                }
-                snake.unshift(head);
-                if(head.x == food.x && head.y == food.y) {
-                    food = {x: Math.floor(Math.random()*29), y: Math.floor(Math.random()*14)};
-                } else { snake.pop(); }
-                
-                ctx.fillStyle = "black"; ctx.fillRect(0,0,300,150);
-                ctx.fillStyle = "red"; ctx.fillRect(food.x*10, food.y*10, 8, 8);
-                ctx.fillStyle = "lime"; snake.forEach(s => ctx.fillRect(s.x*10, s.y*10, 8, 8));
-                trackPlayTime();
-            }, 100);
-            window.onkeydown = (e) => {
-                if(e.key == "ArrowUp" && dy==0) {dx=0; dy=-1}
-                if(e.key == "ArrowDown" && dy==0) {dx=0; dy=1}
-                if(e.key == "ArrowLeft" && dx==0) {dx=-1; dy=0}
-                if(e.key == "ArrowRight" && dx==0) {dx=1; dy=0}
-            };
-        }
-    </script>
-</body>
-</html>
+      <div style="margin:12px 0;">  
+        <button class="btn" onclick="withdraw()">Retirer</button>  
+      </div>  
+
+      <div id="withdrawMsg" class="message" style="display:none;"></div>  
+    </section>  
+  </main>  
+
+  <!-- ===== Page CGU ===== -->  
+  <main class="container" id="cgu" aria-label="CGU" style="margin-top:12px;">  
+    <section class="card" style="padding:16px;">  
+      <div class="title" style="font-size:1.6rem;">CGU</div>  
+      <p style="color:var(--muted); line-height:1.6;">  
+        Rewards financées par des pubs plus vous regardez des pubs plus vous gagnez des récompenses.  
+        En utilisant ce service simulé, vous acceptez les règles suivantes dans le cadre MVP local:  
+      </p>  
+      <ul style="color:#ddd;">  
+        <li>Les actions sont simulées et enregistrées localement.</li>  
+        <li>Aucun backend réel n’est utilisé.</li>  
+        <li>Les jeux et récompenses sont destinés à démontrer le concept MVP.</li>  
+      </ul>  
+    </section>  
+  </main>  
+
+  <!-- ===== Pied de page ===== -->  
+  <footer>  
+    © 2026 Reward Web - Demo MVP local  
+  </footer>  
+
+  <script>  
+    // ===== Initialisation et persistance =====  
+    const STORAGE_KEYS = {  
+      GOLD: 'rewardweb.gold',  
+      CONNECTED: 'rewardweb.connected',  
+      PROVIDER: 'rewardweb.provider'  
+    };  
+
+    // Gold initialisation  
+    function getGold() {  
+      const v = localStorage.getItem(STORAGE_KEYS.GOLD);  
+      return v ? parseInt(v, 10) : 0;  
+    }  
+    function setGold(v) {  
+      localStorage.setItem(STORAGE_KEYS.GOLD, String(v));  
+      updateGoldDisplay();  
+    }  
+
+    let currentGold = getGold();  
+
+    function updateGoldDisplay() {  
+      document.getElementById('goldValue').textContent = currentGold;  
+      // flash sur gain  
+      // simple effet par ajoutHandler si nécessaire  
+    }  
+
+    // Affichage diff pages  
+    function showPage(page) {  
+      // pages: login, dashboard, rewards-page, cgu  
+      document.getElementById('login').style.display = (page === 'login') ? 'block' : 'none';  
+      document.getElementById('dashboard').style.display = (page === 'dashboard') ? 'block' : 'none';  
+      document.getElementById('rewards-page').style.display = (page === 'rewards-page') ? 'block' : 'none';  
+      document.getElementById('cgu').style.display = (page === 'cgu') ? 'block' : 'none';  
+
+      // met à jour bouton actif dans nav  
+      const btns = document.querySelectorAll('.nav button');  
+      btns.forEach(b => b.classList.remove('active'));  
+      if (page === 'login') document.getElementById('nav-login').classList.add('active');  
+    }  
+
+    // Connexion simulée  
+    function simulateLogin(provider) {  
+      localStorage.setItem(STORAGE_KEYS.CONNECTED, 'true');  
+      localStorage.setItem(STORAGE_KEYS.PROVIDER, provider);  
+      // mise à jour UI  
+      currentGold = getGold();  
+      // transition vers dashboard  
+      showPage('dashboard');  
+      // petit feedback  
+      alert('Connexion simulée avec ' + provider);  
+      // afficher message notice éventuel  
+      const notice = document.getElementById('notice');  
+      if (notice) notice.style.display = 'block';  
+    }  
+
+    // Déconnexion  
+    function logout() {  
+      localStorage.removeItem(STORAGE_KEYS.CONNECTED);  
+      localStorage.removeItem(STORAGE_KEYS.PROVIDER);  
+      // recharger / réinitialiser  
+      location.reload();  
+    }  
+
+    // Boutons de connexion via logos  
+    document.querySelectorAll('.provider').forEach(el => {  
+      el.addEventListener('click', () => {  
+        const provider = el.getAttribute('data-provider');  
+        simulateLogin(provider);  
+      });  
+    });  
+
+    // Boutique: pub simulée +20 gold  
+    document.getElementById('watchAdBtn').addEventListener('click', () => {  
+      // simuler attente  
+      alert('Pub en cours...');  
+      // après 2s, ajouter gold  
+      setTimeout(() => {  
+        currentGold += 20;  
+        setGold(currentGold);  
+        // flash léger  
+        const g = document.getElementById('goldValue');  
+        g.style.transition = 'transform 0.15s';  
+        g.style.transform = 'scale(1.15)';  
+        setTimeout(() => { g.style.transform = 'scale(1)'; }, 150);  
+      }, 2000);  
+    });  
+
+    // Mini-jeux: Pong et Snake  
+    const canvas = document.getElementById('gameCanvas');  
+    const ctx = canvas.getContext('2d');  
+    let gameActive = false;  
+    let pongState = null;  
+    let snakeState = null;  
+    let tickInterval = null;  
+
+    function resetCanvas() {  
+      ctx.fillStyle = '#000';  
+      ctx.fillRect(0,0, canvas.width, canvas.height);  
+    }  
+
+    // Pong: raquette droite, contrôles flèches haut/bas  
+    function startPong() {  
+      stopGame();  
+      gameActive = true;  
+      pongState = {  
+        w: canvas.width,  
+        h: canvas.height,  
+        ball: { x: canvas.width/2, y: canvas.height/2, vx: 2, vy: 2, r: 6 },  
+        player: { w: 6, h: 60, y: canvas.height/2 - 30 }  
+      };  
+      document.addEventListener('keydown', onPongKey);  
+      tickInterval = setInterval(pongLoop, 16);  
+    }  
+
+    function onPongKey(e){  
+      const k = e.key;  
+      if (k === 'ArrowUp') pongState.player.y -= 12;  
+      if (k === 'ArrowDown') pongState.player.y += 12;  
+      // limites  
+      if (pongState.player.y < 0) pongState.player.y = 0;  
+      if (pongState.player.y + pongState.player.h > canvas.height) pongState.player.y = canvas.height - pongState.player.h;  
+    }  
+
+    function pongLoop() {  
+      // mouvement balle  
+      const s = pongState;  
+      s.ball.x += s.ball.vx;  
+      s.ball.y += s.ball.vy;  
+      // collision murs  
+      if (s.ball.y - s.ball.r < 0 || s.ball.y + s.ball.r > s.h) s.ball.vy *= -1;  
+      // collision raquette gauche (non simulée) - on a raquette droite uniquement  
+      if (s.ball.x + s.ball.r > s.w - s.player.w) {  
+        if (s.ball.y > s.player.y && s.ball.y < s.player.y + s.player.h) {  
+          s.ball.vx *= -1;  
+        } else {  
+          // balle sort à droite -> gain +50 gold et reset  
+          stopGame();  
+          currentGold += 50;  
+          setGold(currentGold);  
+          announceGain(50);  
+          return;  
+        }  
+      }  
+      if (s.ball.x - s.ball.r < 0) {  
+        s.ball.vx *= -1;  
+      }  
+      // dessin  
+      resetCanvas();  
+      // raquette droite  
+      ctx.fillStyle = '#fff';  
+      ctx.fillRect(canvas.width - s.player.w - 2, s.player.y, s.player.w, s.player.h);  
+      // balle  
+      ctx.beginPath();  
+      ctx.arc(s.ball.x, s.ball.y, s.ball.r, 0, Math.PI*2);  
+      ctx.fillStyle = '#fff';  
+      ctx.fill();  
+    }  
+
+    // Snake  
+    function startSnake() {  
+      stopGame();  
+      gameActive = true;  
+      snakeState = {  
+        cell: 12,  
+        cols: Math.floor(canvas.width / (12)),  
+        rows: Math.floor(canvas.height / (12)),  
+        dir: 'RIGHT',  
+        snake: [{x:5, y:5}],  
+        fruit: {x: Math.floor(Math.random()*20)+5, y: Math.floor(Math.random()*10)+5}  
+      };  
+      document.addEventListener('keydown', onSnakeKey);  
+      tickInterval = setInterval(snakeLoop, 140);  
+    }  
+
+    function onSnakeKey(e){  
+      const k = e.key;  
+      if (k === 'ArrowUp' && snakeState.dir !== 'DOWN') snakeState.dir = 'UP';  
+      else if (k === 'ArrowDown' && snakeState.dir !== 'UP') snakeState.dir = 'DOWN';  
+      else if (k === 'ArrowLeft' && snakeState.dir !== 'RIGHT') snakeState.dir = 'LEFT';  
+      else if (k === 'ArrowRight' && snakeState.dir !== 'LEFT') snakeState.dir = 'RIGHT';  
+    }  
+
+    function snakeLoop() {  
+      // move  
+      const head = Object.assign({},
