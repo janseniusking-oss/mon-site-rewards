@@ -63,7 +63,7 @@
         .login-card .icon img { width: 100%; height: 100%; object-fit: contain; }
         .login-card span { font-weight: bold; font-size: 0.95rem; }
 
-        /* Gold + Pièce réaliste */
+        /* Gold + Pièce réaliste (améliorée) */
         .gold-wrapper {
             display: flex;
             align-items: center;
@@ -187,7 +187,7 @@
             <div id="gold">gold : 0</div>
         </div>
         
-        <div class="blink">sondage à venir pour décider de la prochaine récompense partagez massivement</div>
+        <div class="blink">sondage à venir pour décider de la prochaine récompense partagez massivement (100 1er retrait)</div>
 
         <button class="btn-green" onclick="watchAd()">Regarder pub (+20 gold)</button>
 
@@ -207,8 +207,9 @@
     <div id="rewards" class="hidden">
         <h2>Récompenses</h2>
         <p>5000 gold = 800 Robux</p>
-        <img src="https://www.roblox.com/images/catalog/10k-robux-card.png" 
-             alt="Carte cadeau Roblox 800 Robux" class="reward-img">
+        <img src="https://images.roblox.com/asset/asset/1234567890?width=600&height=400" 
+             alt="Carte cadeau Roblox 800 Robux" class="reward-img" 
+             onerror="this.src='https://www.roblox.com/images/catalog/10k-robux-card.png';">
         <button class="btn-blue" onclick="withdraw()">Retirer</button>
         <p id="withdraw-msg" style="margin-top:1em; min-height:1.5em;"></p>
         <button class="btn-gray" onclick="show('dashboard')">Retour</button>
