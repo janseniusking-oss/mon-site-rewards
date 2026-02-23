@@ -61,7 +61,8 @@
         }
         .login-card .icon img { width: 100%; height: 100%; object-fit: contain; }
         .login-card span { font-weight: bold; font-size: 0.95rem; }
-        /* Gold + Nouvelle pièce (complètement redesign) */
+        
+        /* --- SECTION PIÈCE MODIFIÉE --- */
         .gold-wrapper {
             display: flex;
             flex-direction: column;
@@ -69,36 +70,20 @@
             gap: 10px;
             margin: 1.8em 0 1.2em;
         }
-        .gold-coin {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ffeb3b 0%, #fbc02d 40%, #f9a825 100%);
-            box-shadow: 
-                0 4px 15px rgba(251,192,45,0.7),
-                inset 0 6px 12px rgba(255,255,255,0.35),
-                inset 0 -6px 12px rgba(0,0,0,0.4);
-            position: relative;
-            overflow: hidden;
-            border: 3px solid #e0b300;
+        .gold-coin-new {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 10px rgba(255, 215, 0, 0.4));
+            animation: coin-float 3s ease-in-out infinite;
         }
-        .gold-coin::after {
-            content: '';
-            position: absolute;
-            inset: 12px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 40% 40%, rgba(255,255,255,0.6), transparent 70%);
-            pointer-events: none;
+        @keyframes coin-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
-        .gold-coin svg {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
+        /* ------------------------------ */
+
         #gold { font-size: 3.2rem; font-weight: bold; text-align: center; }
-        /* Texte récompense centré */
         .reward-text {
             text-align: center;
             font-size: 1.45rem;
@@ -147,18 +132,17 @@
             #container { padding: 16px; }
             h1 { font-size: 1.8rem; }
             #gold { font-size: 2.5rem; }
-            .gold-coin { width: 70px; height: 70px; }
+            .gold-coin-new { width: 80px; height: 80px; }
             .reward-text { font-size: 1.25rem; }
         }
     </style>
 </head>
 <body>
 <div id="container">
-    <!-- PAGE CONNEXION -->
     <div id="login">
         <h1>REWARD WEB</h1>
         <p class="subtitle">Rewards financées par des pubs plus vous regardez des pubs plus vous gagnez des récompenses</p>
-       
+        
         <div class="login-grid">
             <div class="login-card" onclick="connect('Google')">
                 <div class="icon">
@@ -181,31 +165,16 @@
         </div>
     </div>
 
-    <!-- DASHBOARD -->
     <div id="dashboard" class="hidden">
         <h2>Bienvenue !</h2>
-       
+        
         <div class="gold-wrapper">
-            <!-- Nouvelle pièce complètement redesign -->
-            <div class="gold-coin">
-                <svg viewBox="0 0 100 100" width="100%" height="100%">
-                    <defs>
-                        <radialGradient id="g" cx="45%" cy="40%" r="90%">
-                            <stop offset="0%" stop-color="#fff"/>
-                            <stop offset="50%" stop-color="#ffeb3b"/>
-                            <stop offset="100%" stop-color="#fbc02d"/>
-                        </radialGradient>
-                    </defs>
-                    <circle cx="50" cy="50" r="48" fill="url(#g)" stroke="#e0b300" stroke-width="3"/>
-                    <text x="50" y="68" font-family="Arial Black, sans-serif" font-size="72" font-weight="900" fill="#1a1a00" text-anchor="middle" letter-spacing="-2">G</text>
-                </svg>
-            </div>
+            <img src="https://googleusercontent.com/image_generation_content/1" alt="Pièce d'or" class="gold-coin-new">
             <div id="gold">gold : 0</div>
         </div>
 
-        <!-- Texte centré comme demandé -->
         <div class="reward-text">5000 gold = 800 Robux</div>
-       
+        
         <div class="blink">sondage à venir pour décider de la prochaine récompense partagez massivement</div>
         <button class="btn-green" onclick="watchAd()">Regarder pub (+20 gold)</button>
         <h3>Joue (max 5 gold/min)</h3>
@@ -218,18 +187,15 @@
         </button>
     </div>
 
-    <!-- RÉCOMPENSES -->
     <div id="rewards" class="hidden">
         <h2>Récompenses</h2>
         <p>5000 gold = 800 Robux</p>
-        <img src="roblox-gift.png"
-             alt="Carte cadeau Roblox 800 Robux" class="reward-img">
+        <img src="roblox-gift.png" alt="Carte cadeau Roblox 800 Robux" class="reward-img">
         <button class="btn-blue" onclick="withdraw()">Retirer</button>
         <p id="withdraw-msg" style="margin-top:1em; min-height:1.5em;"></p>
         <button class="btn-gray" onclick="show('dashboard')">Retour</button>
     </div>
 
-    <!-- CGU -->
     <div id="cgu" class="hidden">
         <h2>CGU</h2>
         <p>Rewards financées par des pubs plus vous regardez des pubs plus vous gagnez des récompenses</p>
@@ -242,10 +208,10 @@
 let gold = parseInt(localStorage.getItem('gold') || '0');
 let connected = localStorage.getItem('connected') === 'true';
 let provider = localStorage.getItem('provider') || '';
-// Éléments
+
 const login = document.getElementById('login');
 const dashboard = document.getElementById('dashboard');
-// Connexion simulée
+
 function connect(prov) {
     alert(`Connexion simulée via ${prov}...`);
     localStorage.setItem('connected', 'true');
@@ -256,21 +222,22 @@ function connect(prov) {
     dashboard.classList.remove('hidden');
     updateGold();
 }
-// Déconnexion
+
 function logout() {
     localStorage.clear();
     location.reload();
 }
-// Gold
+
 function updateGold() {
     document.getElementById('gold').textContent = `gold : ${gold}`;
     localStorage.setItem('gold', gold);
 }
+
 function addGold(amount) {
     gold += amount;
     updateGold();
 }
-// Pub simulée
+
 function watchAd() {
     alert("Pub en cours...");
     setTimeout(() => {
@@ -278,7 +245,13 @@ function watchAd() {
         alert("+20 gold !");
     }, 2000);
 }
-// Retrait
+
+// Fonction placeholder pour tes jeux (remets ton code de jeu ici si tu l'avais en JS)
+function playGame(gameType) {
+    alert("Lancement du jeu : " + gameType);
+    // Ajoute ta logique de jeu ici
+}
+
 function withdraw() {
     if (gold < 5000) {
         document.getElementById('withdraw-msg').textContent = "Pas assez (min 5000)";
@@ -288,7 +261,7 @@ function withdraw() {
     updateGold();
     document.getElementById('withdraw-msg').textContent = "Retrait demandé (24h)";
 }
-// Navigation
+
 function show(page) {
     login.classList.add('hidden');
     dashboard.classList.add('hidden');
@@ -296,7 +269,7 @@ function show(page) {
     document.getElementById('cgu').classList.add('hidden');
     document.getElementById(page).classList.remove('hidden');
 }
-// Init
+
 if (connected) {
     login.classList.add('hidden');
     dashboard.classList.remove('hidden');
