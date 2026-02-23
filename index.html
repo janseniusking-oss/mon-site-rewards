@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RewardsGames CI - Gagne Robux Gratuit</title>
+    <title>rewarde web - Gagne Robux Gratuit</title>
     <style>
         :root {
             --bg: #111;
@@ -35,9 +35,9 @@
         }
         .hidden { display: none !important; }
         h1, h2 { color: var(--gold); text-align: center; margin-bottom: 1em; }
-        .subtitle { color: #aaa; text-align: center; margin-bottom: 2em; }
-        
-        /* Boutons connexion */
+        .subtitle { color: #aaa; text-align: center; margin-bottom: 2em; font-size: 1.1rem; }
+
+        /* Connexion */
         .login-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -54,28 +54,43 @@
             transition: all 0.2s;
         }
         .login-card:hover { transform: scale(1.05); border-color: var(--gold); }
-        .login-card .icon { font-size: 2.5rem; margin-bottom: 0.5em; }
-        .login-card span { font-weight: bold; }
+        .login-card .icon { font-size: 2.8rem; margin-bottom: 0.5em; }
 
-        /* Gold */
-        #gold { 
-            font-size: 3rem; 
-            color: var(--gold); 
-            text-align: center; 
-            margin: 1em 0; 
-            font-weight: bold; 
+        /* Gold + Pièce */
+        .gold-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 1.5em 0;
         }
+        .gold-coin {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #fff, var(--gold) 40%, #d4a017);
+            border-radius: 50%;
+            border: 3px solid #b8860b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: black;
+            box-shadow: 0 4px 12px rgba(255,215,0,0.5);
+        }
+        #gold { font-size: 3rem; font-weight: bold; }
 
-        .blink { 
-            color: var(--red); 
-            font-weight: bold; 
-            animation: blink 1.5s infinite; 
-            text-align: center; 
-            margin: 1em 0; 
+        .blink {
+            color: var(--red);
+            font-weight: bold;
+            animation: blink 1.5s infinite;
+            text-align: center;
+            margin: 1em 0;
+            font-size: 1.1rem;
         }
         @keyframes blink { 50% { opacity: 0.4; } }
 
-        /* Boutons généraux */
+        /* Boutons */
         button {
             width: 100%;
             padding: 14px;
@@ -92,14 +107,15 @@
         .btn-gray:hover { background: #555; }
         .btn-blue { background: var(--blue); color: white; }
 
-        /* Jeux */
-        canvas {
-            background: black;
+        /* Reward image */
+        .reward-img {
+            width: 100%;
+            max-width: 280px;
+            margin: 1.5em auto;
             display: block;
-            margin: 1em auto;
-            max-width: 100%;
-            border: 2px solid #444;
-            border-radius: 8px;
+            border-radius: 12px;
+            border: 2px solid var(--gold);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.3);
         }
 
         /* Responsive */
@@ -107,6 +123,7 @@
             #container { padding: 16px; }
             h1 { font-size: 1.8rem; }
             #gold { font-size: 2.5rem; }
+            .gold-coin { width: 50px; height: 50px; font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -114,10 +131,10 @@
 
 <div id="container">
 
-    <!-- PAGE CONNEXION (visible par défaut) -->
+    <!-- PAGE CONNEXION -->
     <div id="login">
-        <h1>RewardsGames CI</h1>
-        <p class="subtitle">Connecte-toi pour gagner des Robux</p>
+        <h1>rewarde web</h1>
+        <p class="subtitle">Rewards financées pubs plus vous regardez des pubs plus vous gagnez des récompenses</p>
         
         <div class="login-grid">
             <div class="login-card" onclick="connect('Google')">
@@ -135,11 +152,16 @@
         </div>
     </div>
 
-    <!-- DASHBOARD (caché au départ) -->
+    <!-- DASHBOARD -->
     <div id="dashboard" class="hidden">
         <h2>Bienvenue !</h2>
-        <div id="gold">Gold : 0</div>
-        <div class="blink">Sondage à venir ! (dès 100 utilisateurs)</div>
+        
+        <div class="gold-wrapper">
+            <div class="gold-coin">G</div>
+            <div id="gold">gold : 0</div>
+        </div>
+        
+        <div class="blink">sondage à venir pour décider de la prochaine récompense partagez massivement</div>
 
         <button class="btn-green" onclick="watchAd()">Regarder pub (+20 gold)</button>
 
@@ -155,10 +177,12 @@
         </button>
     </div>
 
-    <!-- REWARDS -->
+    <!-- RÉCOMPENSES -->
     <div id="rewards" class="hidden">
         <h2>Récompenses</h2>
-        <p>5000 gold = 10 USD Robux</p>
+        <p>5000 gold = 800 Robux</p>
+        <img src="https://images.unsplash.com/photo-1622297840-4f6d0e0a0d0d?w=600&auto=format&fit=crop&q=80" 
+             alt="Carte cadeau Roblox" class="reward-img">
         <button class="btn-blue" onclick="withdraw()">Retirer</button>
         <p id="withdraw-msg" style="margin-top:1em; min-height:1.5em;"></p>
         <button class="btn-gray" onclick="show('dashboard')">Retour</button>
@@ -167,7 +191,7 @@
     <!-- CGU -->
     <div id="cgu" class="hidden">
         <h2>CGU</h2>
-        <p>Pas de hasard. Gains fixes (pubs + performance). Rewards financées pubs. Pas de garantie. Limites : 5 gold/min. Lois CI. 18+.</p>
+        <p>Rewards financées pubs plus vous regardez des pubs plus vous gagnez des récompenses. Pas de hasard. Gains fixes. Lois CI. 18+.</p>
         <button class="btn-gray" onclick="show('dashboard')">Retour</button>
     </div>
 
@@ -203,7 +227,7 @@ function logout() {
 
 // Gold
 function updateGold() {
-    document.getElementById('gold').textContent = `Gold : ${gold}`;
+    document.getElementById('gold').textContent = `gold : ${gold}`;
     localStorage.setItem('gold', gold);
 }
 
@@ -245,7 +269,6 @@ function show(page) {
 if (connected) {
     login.classList.add('hidden');
     dashboard.classList.remove('hidden');
-    document.getElementById('auth-status') && (document.getElementById('auth-status').textContent = `Connecté via ${provider}`);
 }
 updateGold();
 </script>
