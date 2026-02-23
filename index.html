@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RewardsGames CI - Gagne Robux Gratuit</title>
+    <style>
+        :root {
+            --bg: #111;
+            --card: #222;
+            --text: #eee;
+            --gold: #ffd700;
+            --green: #2ecc71;
+            --red: #e74c3c;
+            --blue: #3498db;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        #container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+        }
+        .hidden { display: none !important; }
+        h1, h2 { color: var(--gold); text-align: center; margin-bottom: 1em; }
+        .subtitle { color: #aaa; text-align: center; margin-bottom: 2em; }
+        
+        /* Boutons connexion */
+        .login-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin: 2em 0;
+        }
+        .login-card {
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .login-card:hover { transform: scale(1.05); border-color: var(--gold); }
+        .login-card .icon { font-size: 2.5rem; margin-bottom: 0.5em; }
+        .login-card span { font-weight: bold; }
+
+        /* Gold */
+        #gold { 
+            font-size: 3rem; 
+            color: var(--gold); 
+            text-align: center; 
+            margin: 1em 0; 
+            font-weight: bold; 
+        }
+
+        .blink { 
+            color: var(--red); 
+            font-weight: bold; 
+            animation: blink 1.5s infinite; 
+            text-align: center; 
+            margin: 1em 0; 
+        }
+        @keyframes blink { 50% { opacity: 0.4; } }
+
+        /* Boutons généraux */
+        button {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-green { background: var(--green); color: black; }
+        .btn-green:hover { filter: brightness(1.1); }
+        .btn-gray { background: #444; color: white; }
+        .btn-gray:hover { background: #555; }
+        .btn-blue { background: var(--blue); color: white; }
+
+        /* Jeux */
+        canvas {
+            background: black;
+            display: block;
+            margin: 1em auto;
+            max-width: 100%;
+            border: 2px solid #444;
+            border-radius: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            #container { padding: 16px; }
+            h1 { font-size: 1.8rem; }
+            #gold { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+
+    <!-- PAGE CONNEXION (visible par défaut) -->
+    <div id="login">
+        <h1>RewardsGames CI</h1>
+        <p class="subtitle">Connecte-toi pour gagner des Robux</p>
+        
+        <div class="login-grid">
+            <div class="login-card" onclick="connect('Google')">
+                <div class="icon">G</div>
+                <span>Google</span>
+            </div>
+            <div class="login-card" onclick="connect('Microsoft')">
+                <div class="icon">M</div>
+                <span>Microsoft</span>
+            </div>
+            <div class="login-card" onclick="connect('iCloud')">
+                <div class="icon"></div>
+                <span>iCloud</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD (caché au départ) -->
+    <div id="dashboard" class="hidden">
+        <h2>Bienvenue !</h2>
+        <div id="gold">Gold : 0</div>
+        <div class="blink">Sondage à venir ! (dès 100 utilisateurs)</div>
+
+        <button class="btn-green" onclick="watchAd()">Regarder pub (+20 gold)</button>
+
+        <h3>Joue (max 5 gold/min)</h3>
+        <button class="btn-gray" onclick="playGame('pong')">Pong</button>
+        <button class="btn-gray" onclick="playGame('snake')">Snake</button>
+
+        <button class="btn-gray" onclick="show('rewards')">Récompenses</button>
+        <button class="btn-gray" onclick="show('cgu')">CGU</button>
+
+        <button onclick="logout()" style="margin-top:2em; background:none; border:none; color:#777; cursor:pointer;">
+            Déconnexion
+        </button>
+    </div>
+
+    <!-- REWARDS -->
+    <div id="rewards" class="hidden">
+        <h2>Récompenses</h2>
+        <p>5000 gold = 10 USD Robux</p>
+        <button class="btn-blue" onclick="withdraw()">Retirer</button>
+        <p id="withdraw-msg" style="margin-top:1em; min-height:1.5em;"></p>
+        <button class="btn-gray" onclick="show('dashboard')">Retour</button>
+    </div>
+
+    <!-- CGU -->
+    <div id="cgu" class="hidden">
+        <h2>CGU</h2>
+        <p>Pas de hasard. Gains fixes (pubs + performance). Rewards financées pubs. Pas de garantie. Limites : 5 gold/min. Lois CI. 18+.</p>
+        <button class="btn-gray" onclick="show('dashboard')">Retour</button>
+    </div>
+
+</div>
+
+<script>
+// Variables
+let gold = parseInt(localStorage.getItem('gold') || '0');
+let connected = localStorage.getItem('connected') === 'true';
+let provider = localStorage.getItem('provider') || '';
+
+// Éléments
+const login = document.getElementById('login');
+const dashboard = document.getElementById('dashboard');
+
+// Connexion simulée
+function connect(prov) {
+    alert(`Connexion simulée via ${prov}...`);
+    localStorage.setItem('connected', 'true');
+    localStorage.setItem('provider', prov);
+    connected = true;
+    provider = prov;
+    login.classList.add('hidden');
+    dashboard.classList.remove('hidden');
+    updateGold();
+}
+
+// Déconnexion
+function logout() {
+    localStorage.clear();
+    location.reload();
+}
+
+// Gold
+function updateGold() {
+    document.getElementById('gold').textContent = `Gold : ${gold}`;
+    localStorage.setItem('gold', gold);
+}
+
+function addGold(amount) {
+    gold += amount;
+    updateGold();
+}
+
+// Pub simulée
+function watchAd() {
+    alert("Pub en cours...");
+    setTimeout(() => {
+        addGold(20);
+        alert("+20 gold !");
+    }, 2000);
+}
+
+// Retrait
+function withdraw() {
+    if (gold < 5000) {
+        document.getElementById('withdraw-msg').textContent = "Pas assez (min 5000)";
+        return;
+    }
+    gold -= 5000;
+    updateGold();
+    document.getElementById('withdraw-msg').textContent = "Retrait demandé (24h)";
+}
+
+// Navigation
+function show(page) {
+    login.classList.add('hidden');
+    dashboard.classList.add('hidden');
+    document.getElementById('rewards').classList.add('hidden');
+    document.getElementById('cgu').classList.add('hidden');
+    document.getElementById(page).classList.remove('hidden');
+}
+
+// Init
+if (connected) {
+    login.classList.add('hidden');
+    dashboard.classList.remove('hidden');
+    document.getElementById('auth-status') && (document.getElementById('auth-status').textContent = `Connecté via ${provider}`);
+}
+updateGold();
+</script>
+</body>
+</html>
