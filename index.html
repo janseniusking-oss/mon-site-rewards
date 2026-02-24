@@ -1,520 +1,350 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Reward Web • Gagne & Joue</title>
-  <style>
-    :root {
-      --bg: #0f0f1a;
-      --card: #1a1a2e;
-      --gold: #ffd700;
-      --accent: #00d4ff;
-      --muted: #8899aa;
-      --danger: #ff4d4d;
-      --success: #00cc88;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: system-ui, sans-serif;
-      background: var(--bg);
-      color: #eee;
-      min-height: 100vh;
-      padding: 12px;
-    }
-    .container { max-width: 420px; margin: 0 auto; }
-    .hidden { display: none !important; }
-    header {
-      text-align: center;
-      padding: 16px 0;
-      background: linear-gradient(to bottom, #1e1e3a, transparent);
-      border-radius: 12px 12px 0 0;
-    }
-    h1 { font-size: 2.1rem; color: var(--gold); text-shadow: 0 2px 8px #0008; }
-    .gold-display {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: var(--gold);
-      margin: 8px 0;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 20px;
-      margin: 16px 0;
-      box-shadow: 0 4px 20px #0006;
-    }
-    button {
-      background: var(--accent);
-      color: #000;
-      border: none;
-      padding: 14px 24px;
-      font-size: 1.1rem;
-      border-radius: 10px;
-      cursor: pointer;
-      margin: 8px;
-      transition: all 0.18s;
-      touch-action: manipulation;
-    }
-    button:hover { filter: brightness(1.15); transform: translateY(-1px); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .flash {
-      animation: flash 0.6s ease-out;
-    }
-    @keyframes flash {
-      0%,100% { opacity:1; }
-      50% { opacity:0.4; transform: scale(1.08); }
-    }
-    #game-canvas {
-      width: 100%;
-      aspect-ratio: 4/3;
-      background: #000;
-      border-radius: 10px;
-      border: 2px solid #333;
-      image-rendering: pixelated;
-    }
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 12px;
-    }
-    .controls button {
-      width: 64px; height: 64px;
-      font-size: 1.8rem;
-      background: #444;
-      color: white;
-    }
-    .reward-msg {
-      padding: 12px;
-      border-radius: 8px;
-      margin: 12px 0;
-      text-align: center;
-      font-weight: bold;
-    }
-    .ok    { background: #002b1a; color: var(--success); }
-    .err   { background: #2b0000; color: var(--danger); }
-    .small { font-size: 0.9rem; color: var(--muted); }
-  </style>
-</head>
-<body>
-
-<div class="container">
-
-  <!-- LOGIN -->
-  <div id="page-login" class="card">
-    <header><h1>Reward Web</h1></header>
-    <p style="text-align:center; margin:20px 0;">Connecte-toi pour commencer à gagner !</p>
-    <button onclick="simulerConnexion('Google')">🔑 Se connecter avec Google</button>
-    <button onclick="simulerConnexion('Discord')">🐱 Se connecter avec Discord</button>
-    <p class="small" style="text-align:center; margin-top:24px;">
-      En continuant, tu acceptes nos <a href="#" onclick="afficherPage('page-cgu');return false">conditions d'utilisation</a>
+Rewards financées par des pubs · plus vous regardez des pubs plus vous gagnez des récompenses.<br/><br/>
+      Le gold accumulé est strictement virtuel et n'a aucune valeur monétaire. Les récompenses (Robux)
+      sont soumises à disponibilité et peuvent nécessiter un délai de traitement de 24 h à 48 h.<br/><br/>
+      En utilisant REWARD WEB, vous acceptez ces conditions et confirmez avoir plus de 13 ans.
+      REWARD WEB se réserve le droit de modifier ces CGU à tout moment.<br/><br/>
+      <em style="color:var(--muted);">Version 1.0 — 2025</em>
     </p>
   </div>
-
-  <!-- DASHBOARD -->
-  <div id="page-dashboard" class="card hidden">
-    <header>
-      <h1>Reward Web</h1>
-      <div class="gold-display">Or : <span id="gold-count">0</span> 🪙</div>
-      <div style="font-size:1.1rem">Bienvenue, <span id="user-name">Joueur</span> !</div>
-    </header>
-
-    <div style="text-align:center; margin:24px 0;">
-      <button onclick="lancerJeu('pong')">🏓 Jouer à Pong</button>
-      <button onclick="lancerJeu('snake')">🐍 Jouer à Snake</button>
-    </div>
-
-    <button id="btn-pub" onclick="regarderPub()">📺 Regarder pub (+20 gold)</button>
-
-    <div style="margin-top:32px; text-align:center;">
-      <button onclick="afficherPage('page-rewards')">🎁 Mes récompenses</button>
-      <button onclick="deconnecter()" style="background:#555;color:#ddd;">🚪 Déconnexion</button>
-    </div>
-  </div>
-
-  <!-- GAME -->
-  <div id="page-game" class="card hidden">
-    <h2 id="game-title" style="text-align:center; margin-bottom:8px;">Jeu</h2>
-    <p id="game-info" class="small" style="text-align:center; margin-bottom:12px;"></p>
-    <canvas id="game-canvas"></canvas>
-
-    <div id="pong-controls" class="controls hidden">
-      <button onclick="pongDir=-1; setTimeout(()=>pongDir=0,120)">↑</button>
-      <button onclick="pongDir=1;  setTimeout(()=>pongDir=0,120)">↓</button>
-    </div>
-
-    <div id="snake-controls" class="controls hidden">
-      <button onclick="window._snakeSetDir({x:0,y:-1})">↑</button><br>
-      <button onclick="window._snakeSetDir({x:-1,y:0})">←</button>
-      <button onclick="window._snakeSetDir({x:1,y:0})">→</button><br>
-      <button onclick="window._snakeSetDir({x:0,y:1})">↓</button>
-    </div>
-
-    <div style="text-align:center; margin-top:16px;">
-      <button onclick="quitterJeu()">← Retour au dashboard</button>
-    </div>
-  </div>
-
-  <!-- REWARDS -->
-  <div id="page-rewards" class="card hidden">
-    <h2>🎁 Récompenses</h2>
-    <p class="gold-display">Or disponible : <span id="rewards-gold">0</span> 🪙</p>
-    
-    <div class="card" style="background:#222;">
-      <p><strong>5000 gold → 800 Robux</strong></p>
-      <p class="small">Financées par des pubs • Délai 24–48h • Sous réserve de stock</p>
-      <button onclick="retirerRecompense()" style="background:var(--success);color:black;width:100%;margin-top:16px;">
-        Demander le retrait
-      </button>
-    </div>
-
-    <div id="reward-msg" class="reward-msg" style="display:none;"></div>
-    <button onclick="afficherPage('page-dashboard')" style="margin-top:24px;">← Retour</button>
-  </div>
-
-  <!-- CGU -->
-  <div id="page-cgu" class="card hidden">
-    <h2>Conditions d'utilisation</h2>
-    <p>Rewards financées par des pubs · plus vous regardez des pubs plus vous gagnez des récompenses.</p>
-    <p>Le gold accumulé est strictement virtuel et n'a aucune valeur monétaire. Les récompenses (Robux) sont soumises à disponibilité et peuvent nécessiter un délai de traitement de 24 h à 48 h.</p>
-    <p>En utilisant REWARD WEB, vous acceptez ces conditions et confirmez avoir plus de 13 ans.<br>
-    REWARD WEB se réserve le droit de modifier ces CGU à tout moment.</p>
-    <p class="small">Version 1.0 — 2025</p>
-    <button onclick="afficherPage('page-login')">← Retour</button>
-  </div>
-
 </div>
-
+<!-- =====================================================
+     SCRIPT PRINCIPAL
+===================================================== -->
 <script>
-// ────────────────────────────────────────────────
-// CONFIG & STATE
-// ────────────────────────────────────────────────
-let gold = parseInt(localStorage.getItem('gold') || '0');
-const GOLD_PER_MIN = 5;
-const GOLD_PER_PUB = 20;
-const GOLD_PONG_WIN  = 50;
-const GOLD_SNAKE_GAME = 50;
-const GOLD_SNAKE_BONUS_EVERY = 5;
-
-function saveGold() { localStorage.setItem('gold', gold); }
-function updateGoldDisplay() {
-  document.querySelectorAll('#gold-count, #rewards-gold').forEach(el => {
+  /* ================================================
+     GESTION GOLD (localStorage)
+  ================================================ */
+  let gold = parseInt(localStorage.getItem('gold') || '0');
+  function sauvegarderGold() {
+    localStorage.setItem('gold', gold);
+  }
+  function mettreAJourAffichageGold() {
+    const el = document.getElementById('gold-count');
     if (el) el.textContent = gold;
-  });
-}
-function addGold(amount, sourceId = null) {
-  gold += amount;
-  saveGold();
-  updateGoldDisplay();
-  if (sourceId) {
+    const elR = document.getElementById('rewards-gold');
+    if (elR) elR.textContent = gold;
+  }
+  function ajouterGold(montant, sourceId = 'gold-display') {
+    gold += montant;
+    sauvegarderGold();
+    mettreAJourAffichageGold();
+    // Flash animation
     const el = document.getElementById(sourceId);
     if (el) {
       el.classList.remove('flash');
-      void el.offsetWidth;
+      void el.offsetWidth; // reflow pour relancer l'animation
       el.classList.add('flash');
     }
   }
-}
-
-// ────────────────────────────────────────────────
-// PAGES
-// ────────────────────────────────────────────────
-const pages = ['page-login','page-dashboard','page-game','page-rewards','page-cgu'];
-function showPage(id) {
-  pages.forEach(p => document.getElementById(p).classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-  if (id === 'page-rewards') updateGoldDisplay();
-}
-
-// ────────────────────────────────────────────────
-// AUTH (simulation)
-// ────────────────────────────────────────────────
-function simulerConnexion(provider) {
-  localStorage.setItem('connected', 'true');
-  localStorage.setItem('provider', provider);
-  localStorage.setItem('userName', provider + ' User');
-  loadDashboard();
-}
-
-function loadDashboard() {
-  const name = localStorage.getItem('userName') || 'Joueur';
-  document.getElementById('user-name').textContent = name;
-  updateGoldDisplay();
-  showPage('page-dashboard');
-  startPassiveGold();
-}
-
-function deconnecter() {
-  if (!confirm('Déconnexion ? Ton or est conservé.')) return;
-  ['connected','provider','userName'].forEach(k => localStorage.removeItem(k));
-  location.reload();
-}
-
-// ────────────────────────────────────────────────
-// PUBS (simulation)
-// ────────────────────────────────────────────────
-let pubBusy = false;
-function regarderPub() {
-  if (pubBusy) return;
-  pubBusy = true;
-  const btn = document.getElementById('btn-pub');
-  btn.disabled = true;
-  btn.textContent = 'Pub en cours...';
-
-  setTimeout(() => {
-    addGold(GOLD_PER_PUB);
-    btn.disabled = false;
-    btn.textContent = `📺 Regarder pub (+${GOLD_PER_PUB} gold)`;
-    pubBusy = false;
-    alert(`+${GOLD_PER_PUB} gold ajoutés !`);
-  }, 2200);
-}
-
-// ────────────────────────────────────────────────
-// GOLD PASSIF (max GOLD_PER_MIN par minute)
-// ────────────────────────────────────────────────
-let passiveInterval = null;
-let goldThisMinute = 0;
-function startPassiveGold() {
-  if (passiveInterval) return;
-  setInterval(() => { goldThisMinute = 0; }, 60000);
-  passiveInterval = setInterval(() => {
-    if (goldThisMinute < GOLD_PER_MIN && document.getElementById('page-dashboard').classList.contains('hidden') === false) {
-      goldThisMinute++;
-      addGold(1);
-    }
-  }, (60000 / GOLD_PER_MIN) * 0.9); // petite marge
-}
-
-// ────────────────────────────────────────────────
-// JEUX
-// ────────────────────────────────────────────────
-let currentGame = null;
-let rafPong = null;
-let intervalSnake = null;
-
-function startGame(type) {
-  currentGame = type;
-  showPage('page-game');
-  document.getElementById('pong-controls').classList.add('hidden');
-  document.getElementById('snake-controls').classList.add('hidden');
-
-  if (type === 'pong') {
-    document.getElementById('game-title').textContent = '🏓 Pong';
-    document.getElementById('game-info').textContent = '↑↓ ou boutons • +50 gold si la balle sort à droite';
-    document.getElementById('pong-controls').classList.remove('hidden');
-    startPong();
-  } else {
-    document.getElementById('game-title').textContent = '🐍 Snake';
-    document.getElementById('game-info').textContent = 'Flèches ou boutons • +50 gold par partie';
-    document.getElementById('snake-controls').classList.remove('hidden');
-    startSnake();
+  /* ================================================
+     NAVIGATION
+  ================================================ */
+  const PAGES = ['page-login','page-dashboard','page-game','page-rewards','page-cgu'];
+  function afficherPage(id) {
+    PAGES.forEach(p => document.getElementById(p).classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    if (id === 'page-rewards') mettreAJourAffichageGold();
   }
-}
-
-function quitGame() {
-  if (rafPong)  cancelAnimationFrame(rafPong);
-  if (intervalSnake) clearInterval(intervalSnake);
-  rafPong = intervalSnake = null;
-  currentGame = null;
-  showPage('page-dashboard');
-}
-
-// ────────────────────────────────────────────────
-// PONG
-// ────────────────────────────────────────────────
-let pongDir = 0;
-function startPong() {
-  const canvas = document.getElementById('game-canvas');
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width = 480, H = canvas.height = 360;
-
-  let bx = W/2, by = H/2;
-  let vx = 4 * (Math.random()>0.5?1:-1), vy = 3 * (Math.random()>0.5?1:-1);
-  let playerY = H/2 - 30;
-  const paddleH = 60, paddleW = 10;
-  let aiY = H/2 - 30;
-
-  function resetBall() {
-    bx = W/2; by = H/2;
-    vx = 4 * (Math.random()>0.5?1:-1);
-    vy = 3 * (Math.random()>0.5?1:-1);
+  /* ================================================
+     CONNEXION / DÉCONNEXION
+  ================================================ */
+  function simulerConnexion(provider) {
+    // Simulation : on stocke l'état dans localStorage
+    localStorage.setItem('connected', 'true');
+    localStorage.setItem('provider', provider);
+    localStorage.setItem('userName', provider + ' User');
+    chargerDashboard();
   }
-
-  function loop() {
-    // Input
-    playerY = Math.max(0, Math.min(H - paddleH, playerY + pongDir * 6));
-
-    // IA basique
-    if (aiY + paddleH/2 < by) aiY = Math.min(H - paddleH, aiY + 3.5);
-    if (aiY + paddleH/2 > by) aiY = Math.max(0, aiY - 3.5);
-
-    // Physique balle
-    bx += vx; by += vy;
-    if (by <= 0 || by >= H) vy = -vy;
-
-    // Collision joueur
-    if (bx >= W - paddleW - 20 && by >= playerY && by <= playerY + paddleH) {
-      vx = -Math.abs(vx) - 0.4;
-      vy += (Math.random() - 0.5) * 2;
-    }
-
-    // Collision IA
-    if (bx <= paddleW + 20 && by >= aiY && by <= aiY + paddleH) {
-      vx = Math.abs(vx) + 0.3;
-    }
-
-    // Score
-    if (bx < 0) resetBall();           // IA marque
-    if (bx > W) {
-      addGold(GOLD_PONG_WIN);
-      alert(`🏆 +${GOLD_PONG_WIN} gold !`);
-      resetBall();
-    }
-
-    // Dessin
-    ctx.fillStyle = '#0a0a14'; ctx.fillRect(0,0,W,H);
-    ctx.strokeStyle = '#222'; ctx.lineWidth=2;
-    ctx.setLineDash([10,10]); ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke(); ctx.setLineDash([]);
-
-    ctx.fillStyle = '#ffd700'; ctx.fillRect(W - paddleW - 15, playerY, paddleW, paddleH);
-    ctx.fillStyle = '#e74c3c'; ctx.fillRect(15, aiY, paddleW, paddleH);
-
-    ctx.beginPath(); ctx.arc(bx,by,9,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
-
-    if (currentGame === 'pong') rafPong = requestAnimationFrame(loop);
+  function chargerDashboard() {
+    const name = localStorage.getItem('userName') || 'Joueur';
+    document.getElementById('user-name').textContent = name;
+    mettreAJourAffichageGold();
+    afficherPage('page-dashboard');
+    demarrerGainJeu(); // s'assure que le timer est prêt
   }
-
-  resetBall();
-  rafPong = requestAnimationFrame(loop);
-}
-
-// ────────────────────────────────────────────────
-// SNAKE
-// ────────────────────────────────────────────────
-function startSnake() {
-  const canvas = document.getElementById('game-canvas');
-  const ctx = canvas.getContext('2d');
-  const COLS = 20, ROWS = 16;
-  const TW = canvas.width / COLS, TH = canvas.height / ROWS;
-
-  let snake = [{x:6,y:8}, {x:5,y:8}, {x:4,y:8}];
-  let dir = {x:1, y:0};
-  let nextDir = {x:1, y:0};
-  let food = placeFood();
-
-  function placeFood() {
-    let f;
-    do { f = {x:Math.floor(Math.random()*COLS), y:Math.floor(Math.random()*ROWS)}; }
-    while (snake.some(s => s.x===f.x && s.y===f.y));
-    return f;
+  function deconnecter() {
+    if (!confirm('Déconnexion ? Ton gold est sauvegardé.')) return;
+    localStorage.removeItem('connected');
+    localStorage.removeItem('provider');
+    localStorage.removeItem('userName');
+    location.reload();
   }
-
-  function setDirection(d) {
-    if (d.x !== 0 && dir.x !== 0) return;
-    if (d.y !== 0 && dir.y !== 0) return;
-    nextDir = d;
+  /* ================================================
+     SIMULATION PUB
+  ================================================ */
+  let pubEnCours = false;
+  function regarderPub() {
+    if (pubEnCours) return;
+    pubEnCours = true;
+    const btn = document.getElementById('btn-pub');
+    btn.disabled = true;
+    btn.textContent = '⏳ Pub en cours... (2s)';
+    setTimeout(() => {
+      ajouterGold(20);
+      btn.disabled = false;
+      btn.textContent = '📺 Regarder pub (+20 gold)';
+      pubEnCours = false;
+      alert('✅ Pub terminée ! +20 gold ajoutés.');
+    }, 2000);
   }
-  window._snakeSetDir = setDirection;
-
-  document.onkeydown = e => {
-    if (e.key==='ArrowUp'    && dir.y===0) nextDir={x:0,y:-1};
-    if (e.key==='ArrowDown'  && dir.y===0) nextDir={x:0,y:1};
-    if (e.key==='ArrowLeft'  && dir.x===0) nextDir={x:-1,y:0};
-    if (e.key==='ArrowRight' && dir.x===0) nextDir={x:1,y:0};
-  };
-
-  function tick() {
-    dir = {...nextDir};
-    const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
-
-    // Collision mur ou soi-même
-    if (head.x<0 || head.x>=COLS || head.y<0 || head.y>=ROWS ||
-        snake.some(s => s.x===head.x && s.y===head.y)) {
-      gameOver();
-      return;
-    }
-
-    snake.unshift(head);
-
-    if (head.x === food.x && head.y === food.y) {
-      food = placeFood();
-      if (snake.length % GOLD_SNAKE_BONUS_EVERY === 0) {
-        addGold(30);
-        alert(`+30 gold bonus ! (${snake.length} segments)`);
+  /* ================================================
+     GOLD PAR JEU (5 gold/min max)
+  ================================================ */
+  let jeuActif = false;
+  let jeuGoldInterval = null;
+  let jeuGoldCeMinute = 0;
+  let jeuMinuteInterval = null;
+  function demarrerGainJeu() {
+    // Reset par minute
+    if (jeuMinuteInterval) clearInterval(jeuMinuteInterval);
+    jeuMinuteInterval = setInterval(() => { jeuGoldCeMinute = 0; }, 60000);
+  }
+  function activerGoldJeu() {
+    if (jeuGoldInterval) return;
+    jeuGoldInterval = setInterval(() => {
+      if (!jeuActif) return;
+      if (jeuGoldCeMinute < 5) {
+        jeuGoldCeMinute++;
+        ajouterGold(1, 'gold-display');
       }
+    }, 12000); // 5 gains répartis sur 60s → toutes les 12s
+  }
+  function desactiverGoldJeu() {
+    clearInterval(jeuGoldInterval);
+    jeuGoldInterval = null;
+  }
+  /* ================================================
+     LANCER / QUITTER JEU
+  ================================================ */
+  let jeuActuel = null;
+  let pongRAF = null;
+  let snakeInterval = null;
+  function lancerJeu(type) {
+    jeuActuel = type;
+    jeuActif = true;
+    afficherPage('page-game');
+    document.getElementById('pong-controls').classList.add('hidden');
+    document.getElementById('snake-controls').classList.add('hidden');
+    if (type === 'pong') {
+      document.getElementById('game-title').textContent = '🏓 Pong';
+      document.getElementById('game-info').textContent = 'Flèches ↑↓ ou boutons tactiles · +50 gold si balle sort à droite';
+      document.getElementById('pong-controls').classList.remove('hidden');
+      lancerPong();
     } else {
-      snake.pop();
+      document.getElementById('game-title').textContent = '🐍 Snake';
+      document.getElementById('game-info').textContent = 'Flèches directionnelles ou boutons · +50 gold par partie';
+      document.getElementById('snake-controls').classList.remove('hidden');
+      lancerSnake();
     }
-
+    activerGoldJeu();
+  }
+  function quitterJeu() {
+    jeuActif = false;
+    desactiverGoldJeu();
+    if (pongRAF) { cancelAnimationFrame(pongRAF); pongRAF = null; }
+    if (snakeInterval) { clearInterval(snakeInterval); snakeInterval = null; }
+    afficherPage('page-dashboard');
+  }
+  /* ================================================
+     PONG
+  ================================================ */
+  let pongDir = 0; // -1 haut, 0 stop, 1 bas
+  function lancerPong() {
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    // État
+    let bx = W/2, by = H/2;
+    let vx = 4, vy = 3;
+    let py = H/2 - 30; // raquette joueur (droite)
+    const PH = 60, PW = 10;
+    // Raquette IA (gauche)
+    let iy = H/2 - 30;
+    function resetBalle() {
+      bx = W/2; by = H/2;
+      vx = (Math.random() > .5 ? 1 : -1) * 4;
+      vy = (Math.random() > .5 ? 1 : -1) * 3;
+    }
+    function loop() {
+      // Clavier
+      if (pongDir !== 0) {
+        py = Math.max(0, Math.min(H - PH, py + pongDir * 5));
+      }
+      // IA simple
+      if (iy + PH/2 < by) iy = Math.min(H - PH, iy + 3);
+      if (iy + PH/2 > by) iy = Math.max(0, iy - 3);
+      // Mouvement balle
+      bx += vx; by += vy;
+      // Mur haut/bas
+      if (by <= 5 || by >= H - 5) vy = -vy;
+      // Raquette droite (joueur)
+      if (bx >= W - PW - 15 && by >= py && by <= py + PH) {
+        vx = -Math.abs(vx) - .3;
+        vy += (Math.random() - .5) * 1.5;
+      }
+      // Raquette gauche (IA)
+      if (bx <= PW + 15 && by >= iy && by <= iy + PH) {
+        vx = Math.abs(vx) + .2;
+      }
+      // Balle sort à gauche → point IA
+      if (bx < 0) { resetBalle(); }
+      // Balle sort à droite → +50 gold pour joueur
+      if (bx > W) {
+        ajouterGold(50);
+        alert('🏆 +50 gold ! La balle est passée à droite !');
+        resetBalle();
+      }
+      // Rendu
+      ctx.fillStyle = '#111';
+      ctx.fillRect(0, 0, W, H);
+      // Ligne centrale
+      ctx.setLineDash([6,8]);
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
+      ctx.setLineDash([]);
+      // Raquettes
+      ctx.fillStyle = '#ffd700';
+      ctx.fillRect(W - PW - 10, py, PW, PH);
+      ctx.fillStyle = '#e74c3c';
+      ctx.fillRect(10, iy, PW, PH);
+      // Balle
+      ctx.beginPath();
+      ctx.arc(bx, by, 8, 0, Math.PI*2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      if (jeuActif && jeuActuel === 'pong') pongRAF = requestAnimationFrame(loop);
+    }
+    resetBalle();
+    pongRAF = requestAnimationFrame(loop);
+    // Clavier
+    document.onkeydown = e => {
+      if (e.key === 'ArrowUp') pongDir = -1;
+      if (e.key === 'ArrowDown') pongDir = 1;
+    };
+    document.onkeyup = e => {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') pongDir = 0;
+    };
+  }
+  /* ================================================
+     SNAKE
+  ================================================ */
+  let snakeDir = {x:1, y:0};
+  function lancerSnake() {
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    const COLS = 20, ROWS = 17;
+    const TW = Math.floor(canvas.width / COLS);
+    const TH = Math.floor(canvas.height / ROWS);
+    let serpent = [{x:5,y:8},{x:4,y:8},{x:3,y:8}];
+    snakeDir = {x:1, y:0};
+    let nextDir = {x:1, y:0};
+    let nourriture = placerNourriture();
+    function placerNourriture() {
+      let f;
+      do {
+        f = {x: Math.floor(Math.random()*COLS), y: Math.floor(Math.random()*ROWS)};
+      } while (serpent.some(s => s.x===f.x && s.y===f.y));
+      return f;
+    }
+    // Clavier
+    document.onkeydown = e => {
+      if (e.key==='ArrowUp' && snakeDir.y===0) nextDir={x:0,y:-1};
+      if (e.key==='ArrowDown' && snakeDir.y===0) nextDir={x:0,y:1};
+      if (e.key==='ArrowLeft' && snakeDir.x===0) nextDir={x:-1,y:0};
+      if (e.key==='ArrowRight' && snakeDir.x===0) nextDir={x:1,y:0};
+    };
+    // Empêche direction opposée via boutons tactiles
+    const setDir = (d) => {
+      if (d.x !== 0 && snakeDir.x !== 0) return;
+      if (d.y !== 0 && snakeDir.y !== 0) return;
+      nextDir = d;
+    };
+    // Override global snakeDir click pour Snake
+    window._snakeSetDir = setDir;
+    function step() {
+      snakeDir = {...nextDir};
+      const tete = {x: serpent[0].x + snakeDir.x, y: serpent[0].y + snakeDir.y};
+      // Collision mur
+      if (tete.x<0 || tete.x>=COLS || tete.y<0 || tete.y>=ROWS) {
+        gameOver(); return;
+      }
+      // Collision soi-même
+      if (serpent.some(s => s.x===tete.x && s.y===tete.y)) {
+        gameOver(); return;
+      }
+      serpent.unshift(tete);
+      if (tete.x===nourriture.x && tete.y===nourriture.y) {
+        nourriture = placerNourriture();
+        // +50 gold toutes les 5 nourritures
+        if (serpent.length % 5 === 0) {
+          ajouterGold(50);
+          alert('🐍 +50 gold ! Continue comme ça !');
+        }
+      } else {
+        serpent.pop();
+      }
+      render();
+    }
+    function gameOver() {
+      clearInterval(snakeInterval);
+      snakeInterval = null;
+      ajouterGold(50);
+      alert('💀 Game Over ! +50 gold pour la partie. Relancer ?');
+      lancerSnake();
+    }
+    function render() {
+      ctx.fillStyle = '#111';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      // Grille légère
+      ctx.strokeStyle = '#1a1a1a';
+      ctx.lineWidth = .5;
+      for (let c=0;c<COLS;c++) { ctx.beginPath(); ctx.moveTo(c*TW,0); ctx.lineTo(c*TW,canvas.height); ctx.stroke(); }
+      for (let r=0;r<ROWS;r++) { ctx.beginPath(); ctx.moveTo(0,r*TH); ctx.lineTo(canvas.width,r*TH); ctx.stroke(); }
+      // Nourriture
+      ctx.fillStyle = '#e74c3c';
+      ctx.beginPath();
+      ctx.arc(nourriture.x*TW+TW/2, nourriture.y*TH+TH/2, TW/2-2, 0, Math.PI*2);
+      ctx.fill();
+      // Serpent
+      serpent.forEach((seg,i) => {
+        ctx.fillStyle = i===0 ? '#2ecc71' : '#27ae60';
+        ctx.fillRect(seg.x*TW+1, seg.y*TH+1, TW-2, TH-2);
+      });
+    }
     render();
+    if (snakeInterval) clearInterval(snakeInterval);
+    snakeInterval = setInterval(step, 130);
   }
-
-  function gameOver() {
-    clearInterval(intervalSnake);
-    intervalSnake = null;
-    addGold(GOLD_SNAKE_GAME);
-    alert(`+${GOLD_SNAKE_GAME} gold pour la partie !`);
-    startSnake(); // relance automatique – tu peux changer pour demander confirmation
+  /* ================================================
+     RÉCOMPENSES
+  ================================================ */
+  function retirerRecompense() {
+    const msg = document.getElementById('reward-msg');
+    msg.style.display = 'block';
+    if (gold < 5000) {
+      msg.className = 'reward-msg err';
+      msg.textContent = '❌ Gold insuffisant ! Il te faut 5 000 gold (tu en as ' + gold + ').';
+    } else {
+      ajouterGold(-5000);
+      mettreAJourAffichageGold();
+      msg.className = 'reward-msg ok';
+      msg.textContent = '✅ Retrait demandé ! Tu recevras tes Robux sous 24 h.';
+    }
+    setTimeout(() => { msg.style.display = 'none'; }, 4000);
   }
-
-  function render() {
-    ctx.fillStyle = '#0a0a14'; ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    // Grille
-    ctx.strokeStyle = '#1a1a22'; ctx.lineWidth=0.5;
-    for (let i=1;i<COLS;i++) { ctx.beginPath(); ctx.moveTo(i*TW,0); ctx.lineTo(i*TW,canvas.height); ctx.stroke(); }
-    for (let i=1;i<ROWS;i++) { ctx.beginPath(); ctx.moveTo(0,i*TH); ctx.lineTo(canvas.width,i*TH); ctx.stroke(); }
-
-    // Food
-    ctx.fillStyle = '#e74c3c';
-    ctx.beginPath();
-    ctx.arc(food.x*TW + TW/2, food.y*TH + TH/2, TW*0.4, 0, Math.PI*2);
-    ctx.fill();
-
-    // Snake
-    snake.forEach((s,i) => {
-      ctx.fillStyle = i===0 ? '#2ecc71' : '#27ae60';
-      ctx.fillRect(s.x*TW+1, s.y*TH+1, TW-2, TH-2);
-    });
-  }
-
-  render();
-  if (intervalSnake) clearInterval(intervalSnake);
-  intervalSnake = setInterval(tick, 140);
-}
-
-// ────────────────────────────────────────────────
-// REWARDS
-// ────────────────────────────────────────────────
-function retirerRecompense() {
-  const msg = document.getElementById('reward-msg');
-  msg.style.display = 'block';
-
-  if (gold < 5000) {
-    msg.className = 'reward-msg err';
-    msg.textContent = `❌ Pas assez ! Il te faut 5000 gold (tu as ${gold})`;
-  } else {
-    addGold(-5000);
-    msg.className = 'reward-msg ok';
-    msg.textContent = '✅ Demande envoyée ! Robux dans 24–48h (selon stock)';
-  }
-
-  setTimeout(() => msg.style.display = 'none', 5000);
-}
-
-// ────────────────────────────────────────────────
-// INIT
-// ────────────────────────────────────────────────
-(function init() {
-  updateGoldDisplay();
-  if (localStorage.getItem('connected') === 'true') {
-    loadDashboard();
-  } else {
-    showPage('page-login');
-  }
-})();
+  /* ================================================
+     INIT AU CHARGEMENT
+  ================================================ */
+  (function init() {
+    // Vérifier si déjà connecté
+    if (localStorage.getItem('connected') === 'true') {
+      chargerDashboard();
+    } else {
+      afficherPage('page-login');
+    }
+    demarrerGainJeu();
+  })();
 </script>
 </body>
 </html>
