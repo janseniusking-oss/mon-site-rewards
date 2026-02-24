@@ -1,4 +1,44 @@
-Rewards financées par des pubs · plus vous regardez des pubs plus vous gagnez des récompenses.<br/><br/>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reward Web</title>
+  <!-- Ton CSS est probablement ici, mais il n'était pas dans le fragment partagé -->
+  <style>
+    /* Si tu as le CSS original, colle-le ici. Sinon, c'est probablement dans un <style> précédent */
+    .hidden { display: none; }
+    .flash { animation: flash 0.6s; }
+    @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    /* ... le reste de ton style ... */
+  </style>
+</head>
+<body>
+
+<!-- Les pages HTML étaient probablement avant le fragment que tu as collé -->
+<!-- Exemple approximatif des divs manquants (à adapter avec ton vrai HTML) -->
+<div id="page-login">… Contenu login …</div>
+<div id="page-dashboard">
+  <span id="user-name"></span>
+  <span id="gold-count">0</span>
+  <button id="btn-pub">📺 Regarder pub (+20 gold)</button>
+  <!-- boutons pour lancerJeu('pong'), lancerJeu('snake'), etc. -->
+</div>
+<div id="page-game">
+  <h2 id="game-title"></h2>
+  <p id="game-info"></p>
+  <canvas id="game-canvas" width="400" height="300"></canvas>
+  <div id="pong-controls" class="hidden">… boutons ↑ ↓ …</div>
+  <div id="snake-controls" class="hidden">… boutons ← ↑ → ↓ …</div>
+</div>
+<div id="page-rewards">
+  <span id="rewards-gold">0</span>
+  <div id="reward-msg" class="reward-msg"></div>
+  <!-- bouton pour retirerRecompense() -->
+</div>
+<div id="page-cgu">
+  <div>
+    <p>Rewards financées par des pubs · plus vous regardez des pubs plus vous gagnez des récompenses.<br/><br/>
       Le gold accumulé est strictement virtuel et n'a aucune valeur monétaire. Les récompenses (Robux)
       sont soumises à disponibilité et peuvent nécessiter un délai de traitement de 24 h à 48 h.<br/><br/>
       En utilisant REWARD WEB, vous acceptez ces conditions et confirmez avoir plus de 13 ans.
@@ -7,8 +47,9 @@ Rewards financées par des pubs · plus vous regardez des pubs plus vous gagnez 
     </p>
   </div>
 </div>
+
 <!-- =====================================================
-     SCRIPT PRINCIPAL
+     SCRIPT PRINCIPAL (exactement comme tu l'as envoyé)
 ===================================================== -->
 <script>
   /* ================================================
