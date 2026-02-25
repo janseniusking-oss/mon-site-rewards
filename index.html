@@ -6,6 +6,8 @@
   <meta name="theme-color" content="#111111" />
   <meta name="description" content="REWARD WEB - Gagne des Robux gratuits en regardant des pubs !" />
   <title>REWARD WEB - Gagne Robux Gratuit</title>
+  <!-- Favicon pièce dorée SVG -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='38%25' cy='30%25' r='62%25'%3E%3Cstop offset='0%25' stop-color='%23fff9a0'/%3E%3Cstop offset='40%25' stop-color='%23ffd700'/%3E%3Cstop offset='80%25' stop-color='%23ff9800'/%3E%3Cstop offset='100%25' stop-color='%23b8730a'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cellipse cx='32' cy='58' rx='20' ry='5' fill='rgba(0,0,0,0.3)'/%3E%3Cellipse cx='32' cy='37' rx='24' ry='24' fill='%237a4900'/%3E%3Cellipse cx='32' cy='33' rx='24' ry='24' fill='url(%23g)'/%3E%3Cellipse cx='32' cy='33' rx='24' ry='24' fill='none' stroke='%23ffe566' stroke-width='2' opacity='0.7'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='26' font-weight='900' font-family='Georgia,serif' fill='%23b8730a' opacity='0.4' dx='1' dy='1'%3EG%3C/text%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='26' font-weight='900' font-family='Georgia,serif' fill='%23fff8dc'%3EG%3C/text%3E%3C/svg%3E" />
 
   <style>
   /* ================================================
@@ -824,6 +826,7 @@ import {
   getDoc,
   setDoc,
   updateDoc,
+  onSnapshot,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -923,15 +926,18 @@ async function sauvegarderGoldCloud() {
   }
 }
 
+/* Listener Firestore temps réel — s'arrête quand on se déconnecte */
+let unsubscribeSnapshot = null;
+
 async function chargerGoldCloud() {
   if (!currentUser) return;
+
+  const ref = doc(db, 'users', currentUser.uid);
+
+  // Vérifier si le document existe, sinon le créer
   try {
-    const ref  = doc(db, 'users', currentUser.uid);
     const snap = await getDoc(ref);
-    if (snap.exists()) {
-      gold = snap.data().gold || 0;
-    } else {
-      // Première connexion → créer le document
+    if (!snap.exists()) {
       await setDoc(ref, {
         uid:         currentUser.uid,
         email:       currentUser.email,
@@ -940,12 +946,22 @@ async function chargerGoldCloud() {
         createdAt:   serverTimestamp(),
         lastUpdated: serverTimestamp()
       });
-      gold = 0;
     }
-    majAffichageGold();
   } catch (e) {
-    console.warn('Erreur chargement gold :', e);
+    console.warn('Erreur init document :', e);
   }
+
+  // Écouter les changements en temps réel
+  // → le gold ne retombera JAMAIS à 0 au rechargement
+  unsubscribeSnapshot = onSnapshot(ref, (snap) => {
+    if (snap.exists()) {
+      const data = snap.data();
+      gold = data.gold || 0;
+      majAffichageGold();
+    }
+  }, (e) => {
+    console.warn('Erreur snapshot :', e);
+  });
 }
 
 /* ================================================
@@ -966,6 +982,8 @@ window.connexionGoogle = connexionGoogle;
 async function deconnecter() {
   if (!confirm('Déconnexion ?\nTon gold est sauvegardé dans le cloud.')) return;
   stopToutJeu();
+  // Arrêter l'écoute Firestore
+  if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
   await signOut(auth);
 }
 window.deconnecter = deconnecter;
@@ -991,14 +1009,50 @@ onAuthStateChanged(auth, async (user) => {
       document.getElementById('user-avatar-placeholder').textContent = initiale;
     }
 
-    // Charger le gold depuis Firestore
-    await chargerGoldCloud();
+    // Charger le gold depuis Firestore (onSnapshot)
+    // On attend le PREMIER snapshot avant d'afficher le dashboard
+    // pour éviter d'afficher gold=0 pendant une fraction de seconde
+    await new Promise((resolve) => {
+      const ref = doc(db, 'users', currentUser.uid);
+
+      // Init document si première connexion
+      getDoc(ref).then(async (snap) => {
+        if (!snap.exists()) {
+          await setDoc(ref, {
+            uid:         user.uid,
+            email:       user.email,
+            displayName: user.displayName,
+            gold:        0,
+            createdAt:   serverTimestamp(),
+            lastUpdated: serverTimestamp()
+          });
+        }
+
+        // Écoute temps réel — premier appel résout la Promise
+        let premierAppel = true;
+        unsubscribeSnapshot = onSnapshot(ref, (s) => {
+          if (s.exists()) {
+            gold = s.data().gold || 0;
+            majAffichageGold();
+          }
+          if (premierAppel) { premierAppel = false; resolve(); }
+        }, (e) => {
+          console.warn('Erreur snapshot :', e);
+          resolve(); // on affiche quand même le dashboard
+        });
+
+      }).catch((e) => {
+        console.warn('Erreur getDoc init :', e);
+        resolve();
+      });
+    });
 
     afficherPage('page-dashboard');
 
   } else {
     currentUser = null;
     gold        = 0;
+    if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
     afficherPage('page-login');
   }
 });
