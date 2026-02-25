@@ -9,7 +9,7 @@
 
   <style>
   /* ================================================
-     VARIABLES GLOBALES
+     VARIABLES
   ================================================ */
   :root {
     --bg:     #111111;
@@ -29,11 +29,9 @@
   ================================================ */
   *, *::before, *::after {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     -webkit-tap-highlight-color: transparent;
   }
-
   html, body {
     background: var(--bg);
     color: var(--text);
@@ -74,14 +72,9 @@
   }
   .btn:active   { transform: scale(.96); }
   .btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
-
   .btn-gold  { background: linear-gradient(135deg, #ffd700, #ff9800); color: #111; }
   .btn-green { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; }
-  .btn-dark  {
-    background: var(--card2);
-    color: var(--text);
-    border: 1px solid #333;
-  }
+  .btn-dark  { background: var(--card2); color: var(--text); border: 1px solid #333; }
 
   /* ================================================
      CARD
@@ -93,7 +86,6 @@
     padding: 18px;
     margin-bottom: 14px;
   }
-
   .section-title {
     font-size: 12px;
     color: var(--muted);
@@ -106,16 +98,42 @@
      ANIMATIONS
   ================================================ */
   @keyframes flash-gold {
-    0%   { background: rgba(255, 215, 0, .32); border-color: var(--gold); }
-    100% { background: var(--card2);           border-color: #333; }
+    0%   { background: rgba(255,215,0,.32); border-color: var(--gold); }
+    100% { background: var(--card2);        border-color: #333; }
   }
   .flash { animation: flash-gold .7s ease-out; }
 
   @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0; }
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0; }
   }
   .blink { animation: blink 1.1s infinite; }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ================================================
+     ÉCRAN DE CHARGEMENT
+  ================================================ */
+  #page-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 4px solid #333;
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  .loading-text {
+    font-size: 14px;
+    color: var(--muted);
+  }
 
   /* ================================================
      PAGE CONNEXION
@@ -127,7 +145,6 @@
     justify-content: center;
     text-align: center;
   }
-
   .logo-text {
     font-size: 46px;
     font-weight: 900;
@@ -137,7 +154,6 @@
     -webkit-text-fill-color: transparent;
     margin-bottom: 10px;
   }
-
   .subtitle {
     font-size: 13px;
     color: var(--muted);
@@ -146,40 +162,40 @@
     line-height: 1.7;
   }
 
-  .login-providers {
+  /* Bouton Google */
+  .google-btn {
     display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .provider-btn {
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    width: 100px;
-    padding: 20px 16px;
-    background: var(--card2);
-    border: 2px solid #333;
-    border-radius: 18px;
-    color: var(--text);
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+    max-width: 300px;
+    padding: 16px 24px;
+    background: #fff;
+    border: none;
+    border-radius: var(--radius);
     font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
     cursor: pointer;
-    transition: border-color .2s, transform .12s, box-shadow .2s;
+    transition: transform .12s, box-shadow .2s;
+    box-shadow: 0 2px 12px rgba(0,0,0,.3);
   }
-  .provider-btn:hover {
-    border-color: var(--gold);
-    box-shadow: 0 0 20px rgba(255, 215, 0, .2);
-    transform: translateY(-3px);
+  .google-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.4);
   }
-  .provider-btn:active { transform: scale(.93); }
-  .provider-btn img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
+  .google-btn:active { transform: scale(.96); }
+  .google-btn img { width: 24px; height: 24px; }
+
+  .login-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 20px;
+    max-width: 260px;
+    text-align: center;
+    line-height: 1.6;
   }
 
   /* ================================================
@@ -191,10 +207,48 @@
     justify-content: space-between;
     margin-bottom: 20px;
   }
-  .top-bar h1 {
-    font-size: 22px;
+  .top-bar h1 { font-size: 22px; font-weight: 900; color: var(--gold); }
+
+  /* Info utilisateur */
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card2);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    margin-bottom: 14px;
+  }
+  .user-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold);
+  }
+  .user-avatar-placeholder {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
     font-weight: 900;
-    color: var(--gold);
+    color: #111;
+    flex-shrink: 0;
+  }
+  .user-details { flex: 1; }
+  .user-name  { font-size: 14px; font-weight: 700; color: var(--text); }
+  .user-email { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .sync-badge {
+    font-size: 10px;
+    background: rgba(46,204,113,.15);
+    color: var(--green);
+    border: 1px solid rgba(46,204,113,.3);
+    border-radius: 6px;
+    padding: 3px 7px;
+    font-weight: 700;
   }
 
   /* Compteur gold */
@@ -209,20 +263,12 @@
     margin-bottom: 14px;
     transition: background .3s, border-color .3s;
   }
-  .gold-counter .amount {
-    font-size: 38px;
-    font-weight: 900;
-    color: var(--gold);
-  }
-  .gold-counter .label {
-    font-size: 13px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
+  .gold-counter .amount { font-size: 38px; font-weight: 900; color: var(--gold); }
+  .gold-counter .label  { font-size: 13px; color: var(--muted); margin-top: 2px; }
 
   /* Sondage */
   .survey-msg {
-    background: rgba(231, 76, 60, .12);
+    background: rgba(231,76,60,.12);
     border: 1px solid var(--red);
     border-radius: var(--radius);
     padding: 12px 16px;
@@ -240,7 +286,6 @@
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-
   .btn-game {
     display: flex;
     flex-direction: column;
@@ -261,7 +306,6 @@
   .btn-game:active { transform: scale(.95); }
   .btn-game .icon  { font-size: 30px; }
 
-  /* Navigation bas */
   .nav-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -278,20 +322,13 @@
     align-items: center;
     padding-bottom: 32px;
   }
-
-  #page-game h2 {
-    font-size: 22px;
-    color: var(--gold);
-    margin-bottom: 6px;
-  }
-
+  #page-game h2 { font-size: 22px; color: var(--gold); margin-bottom: 6px; }
   .game-info {
     font-size: 12px;
     color: var(--muted);
     margin-bottom: 12px;
     text-align: center;
   }
-
   #game-canvas {
     display: block;
     width: 100%;
@@ -301,7 +338,7 @@
     touch-action: none;
   }
 
-  /* Barre progression gold */
+  /* Timer gold */
   .gold-timer {
     width: 100%;
     max-width: 340px;
@@ -313,14 +350,14 @@
     font-size: 12px;
     color: var(--muted);
   }
-  .gold-timer .timer-track {
+  .timer-track {
     height: 7px;
     background: #333;
     border-radius: 4px;
     overflow: hidden;
     margin-top: 6px;
   }
-  .gold-timer .timer-fill {
+  .timer-fill {
     height: 100%;
     border-radius: 4px;
     background: linear-gradient(90deg, #2ecc71, #ffd700);
@@ -338,8 +375,7 @@
     max-width: 340px;
   }
   .pong-controls button {
-    width: 100%;
-    padding: 22px;
+    width: 100%; padding: 22px;
     font-size: 28px;
     border-radius: var(--radius);
     border: 2px solid #333;
@@ -353,13 +389,7 @@
   }
   .pong-controls button:active { background: #333; }
 
-  /* D-Pad Snake — croix 3×3 */
-  /*
-     Grille  :  col1   col2   col3
-     row 1   :  [ ]   [ ▲ ]  [ ]
-     row 2   :  [ ◀ ] [ -- ] [ ▶ ]
-     row 3   :  [ ]   [ ▼ ]  [ ]
-  */
+  /* D-Pad Snake */
   .snake-dpad {
     display: grid;
     grid-template-columns: repeat(3, 80px);
@@ -368,8 +398,7 @@
     margin-top: 18px;
   }
   .snake-dpad button {
-    width: 80px;
-    height: 80px;
+    width: 80px; height: 80px;
     font-size: 34px;
     border-radius: 16px;
     border: 2px solid #444;
@@ -389,7 +418,6 @@
     transform: scale(.87);
     border-color: var(--green);
   }
-  /* Placement dans la grille */
   .dpad-up    { grid-column: 2; grid-row: 1; }
   .dpad-left  { grid-column: 1; grid-row: 2; }
   .dpad-right { grid-column: 3; grid-row: 2; }
@@ -417,14 +445,12 @@
   /* ================================================
      PAGE RÉCOMPENSES
   ================================================ */
-  #page-rewards h2,
-  #page-cgu h2 {
+  #page-rewards h2, #page-cgu h2 {
     font-size: 24px;
     color: var(--gold);
     margin-bottom: 20px;
     text-align: center;
   }
-
   .reward-card {
     background: var(--card2);
     border-radius: var(--radius);
@@ -433,24 +459,21 @@
     text-align: center;
     margin-bottom: 14px;
   }
-
   .reward-card img {
     display: block;
     width: 180px;
     border-radius: 10px;
     margin: 14px auto;
   }
-
   .reward-price {
     font-size: 20px;
     font-weight: 800;
     color: var(--gold);
     margin-bottom: 8px;
   }
-
   .reward-window-box {
-    background: rgba(255, 215, 0, .07);
-    border: 1px solid rgba(255, 215, 0, .22);
+    background: rgba(255,215,0,.07);
+    border: 1px solid rgba(255,215,0,.22);
     border-radius: 10px;
     padding: 10px 14px;
     font-size: 12px;
@@ -459,7 +482,6 @@
     line-height: 1.7;
     margin: 12px 0;
   }
-
   .reward-msg {
     padding: 10px;
     border-radius: 8px;
@@ -468,8 +490,8 @@
     font-weight: 700;
     line-height: 1.5;
   }
-  .reward-msg.ok  { background: rgba(46,  204, 113, .13); color: var(--green); }
-  .reward-msg.err { background: rgba(231,  76,  60, .13); color: var(--red);   }
+  .reward-msg.ok  { background: rgba(46,204,113,.13); color: var(--green); }
+  .reward-msg.err { background: rgba(231,76,60,.13);  color: var(--red);   }
 
   /* ================================================
      PAGE CGU
@@ -488,8 +510,30 @@
   }
 
   /* ================================================
-     SCROLLBAR
+     TOAST NOTIFICATION
   ================================================ */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--card2);
+    border: 1px solid #444;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    z-index: 9999;
+    transition: transform .3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.gold { border-color: var(--gold); color: var(--gold); }
+  #toast.err  { border-color: var(--red);  color: var(--red);  }
+
+  /* Scrollbar */
   ::-webkit-scrollbar       { width: 4px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
@@ -497,49 +541,47 @@
 </head>
 <body>
 
-<!-- ==================================================
+<!-- ================================================
+     TOAST (notification discrète)
+================================================ -->
+<div id="toast"></div>
+
+<!-- ================================================
+     PAGE : CHARGEMENT
+================================================ -->
+<div id="page-loading" class="page">
+  <div class="spinner"></div>
+  <div class="loading-text">Connexion en cours...</div>
+</div>
+
+<!-- ================================================
      PAGE : CONNEXION
-================================================== -->
-<div id="page-login" class="page">
+================================================ -->
+<div id="page-login" class="page hidden">
 
   <div class="logo-text">REWARD WEB</div>
-
   <p class="subtitle">
     Rewards financées par des pubs ·
     plus vous regardez des pubs,<br>plus vous gagnez des récompenses
   </p>
 
-  <div class="login-providers">
+  <button class="google-btn" onclick="connexionGoogle()">
+    <img src="https://www.google.com/favicon.ico" alt="Google" />
+    Continuer avec Google
+  </button>
 
-    <button class="provider-btn" onclick="simulerConnexion('Google')">
-      <img src="https://www.google.com/favicon.ico"
-           onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png'"
-           alt="Google" />
-      Google
-    </button>
+  <p class="login-note">
+    🔒 Ta progression est sauvegardée dans le cloud et liée à ton compte Google.
+  </p>
 
-    <button class="provider-btn" onclick="simulerConnexion('Microsoft')">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/480px-Microsoft_logo.svg.png"
-           alt="Microsoft" />
-      Microsoft
-    </button>
-
-    <button class="provider-btn" onclick="simulerConnexion('iCloud')">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/480px-Apple_logo_black.svg.png"
-           alt="iCloud" style="filter: invert(1)" />
-      iCloud
-    </button>
-
-  </div>
 </div><!-- /page-login -->
 
 
-<!-- ==================================================
+<!-- ================================================
      PAGE : DASHBOARD
-================================================== -->
+================================================ -->
 <div id="page-dashboard" class="page hidden">
 
-  <!-- Barre supérieure -->
   <div class="top-bar">
     <h1>🎮 REWARD WEB</h1>
     <button class="btn btn-dark"
@@ -549,53 +591,50 @@
     </button>
   </div>
 
-  <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">
-    Bienvenue, <strong id="user-name" style="color:var(--gold)">Joueur</strong> !
-  </p>
+  <!-- Infos utilisateur Google -->
+  <div class="user-info">
+    <img id="user-avatar" class="user-avatar hidden" src="" alt="avatar" />
+    <div id="user-avatar-placeholder" class="user-avatar-placeholder">?</div>
+    <div class="user-details">
+      <div class="user-name"  id="user-name">Joueur</div>
+      <div class="user-email" id="user-email">...</div>
+    </div>
+    <span class="sync-badge">☁️ Sync</span>
+  </div>
 
-  <!-- Compteur gold avec pièce SVG -->
+  <!-- Compteur gold -->
   <div class="gold-counter" id="gold-display">
-
-    <!-- Pièce dorée 3D inline SVG -->
     <svg width="54" height="54" viewBox="0 0 54 54"
          style="flex-shrink:0" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <radialGradient id="coin-grad" cx="38%" cy="30%" r="62%">
+        <radialGradient id="cg" cx="38%" cy="30%" r="62%">
           <stop offset="0%"   stop-color="#fff9a0"/>
           <stop offset="40%"  stop-color="#ffd700"/>
           <stop offset="80%"  stop-color="#ff9800"/>
           <stop offset="100%" stop-color="#b8730a"/>
         </radialGradient>
-        <filter id="coin-shadow">
+        <filter id="cs">
           <feDropShadow dx="0" dy="4" stdDeviation="3"
                         flood-color="#b8730a" flood-opacity=".55"/>
         </filter>
       </defs>
-      <!-- Ombre portée -->
       <ellipse cx="27" cy="50" rx="18" ry="4" fill="rgba(0,0,0,.4)"/>
-      <!-- Tranche (effet 3D) -->
       <ellipse cx="27" cy="31" rx="20" ry="20" fill="#7a4900"/>
-      <!-- Face principale -->
-      <ellipse cx="27" cy="28" rx="20" ry="20"
-               fill="url(#coin-grad)" filter="url(#coin-shadow)"/>
-      <!-- Bordure brillante -->
+      <ellipse cx="27" cy="28" rx="20" ry="20" fill="url(#cg)" filter="url(#cs)"/>
       <ellipse cx="27" cy="28" rx="20" ry="20"
                fill="none" stroke="#ffe566" stroke-width="1.5" opacity=".7"/>
-      <!-- Lettre G en relief -->
       <text x="27" y="35" text-anchor="middle" font-size="21" font-weight="900"
-            font-family="Georgia,serif" fill="#b8730a" opacity=".4"
-            dx="1" dy="1">G</text>
+            font-family="Georgia,serif" fill="#b8730a" opacity=".4" dx="1" dy="1">G</text>
       <text x="27" y="35" text-anchor="middle" font-size="21" font-weight="900"
             font-family="Georgia,serif" fill="#fff8dc">G</text>
     </svg>
-
     <div>
       <div class="amount" id="gold-count">0</div>
       <div class="label">gold disponible</div>
     </div>
   </div>
 
-  <!-- Message sondage clignotant -->
+  <!-- Sondage -->
   <div class="survey-msg blink">
     ⚠️ SONDAGE À VENIR pour décider de la prochaine récompense<br>
     — PARTAGEZ MASSIVEMENT !
@@ -631,28 +670,26 @@
 </div><!-- /page-dashboard -->
 
 
-<!-- ==================================================
+<!-- ================================================
      PAGE : JEU
-================================================== -->
+================================================ -->
 <div id="page-game" class="page hidden">
 
   <button class="back-btn" onclick="quitterJeu()">← Retour</button>
-
   <h2 id="game-title">Jeu</h2>
   <div class="game-info" id="game-info">...</div>
 
-  <!-- Canvas commun Pong / Snake -->
   <canvas id="game-canvas" width="320" height="288"></canvas>
 
   <!-- Barre progression +5 gold -->
-  <div class="gold-timer" id="gold-timer">
+  <div class="gold-timer">
     <span id="timer-label">⏱ +5 gold dans <span id="timer-secs">60</span>s</span>
     <div class="timer-track">
       <div class="timer-fill" id="timer-fill"></div>
     </div>
   </div>
 
-  <!-- Contrôles Pong (haut/bas) -->
+  <!-- Contrôles Pong -->
   <div id="pong-controls" class="pong-controls hidden">
     <button ontouchstart="pongDir=-1; event.preventDefault()"
             ontouchend="pongDir=0"
@@ -664,25 +701,17 @@
             onmouseup="pongDir=0">▼</button>
   </div>
 
-  <!--
-    D-Pad Snake — grille CSS 3×3.
-    Seuls 4 boutons sont placés (haut, gauche, droite, bas).
-    Les 5 autres cellules restent vides → croix naturelle.
-    setSnakeDir() est une fonction GLOBALE accessible depuis l'HTML.
-  -->
+  <!-- D-Pad Snake -->
   <div id="snake-controls" class="snake-dpad hidden">
     <button class="dpad-up"
             ontouchstart="setSnakeDir(0,-1); event.preventDefault()"
             onmousedown="setSnakeDir(0,-1)">▲</button>
-
     <button class="dpad-left"
             ontouchstart="setSnakeDir(-1,0); event.preventDefault()"
             onmousedown="setSnakeDir(-1,0)">◀</button>
-
     <button class="dpad-right"
             ontouchstart="setSnakeDir(1,0); event.preventDefault()"
             onmousedown="setSnakeDir(1,0)">▶</button>
-
     <button class="dpad-down"
             ontouchstart="setSnakeDir(0,1); event.preventDefault()"
             onmousedown="setSnakeDir(0,1)">▼</button>
@@ -691,9 +720,9 @@
 </div><!-- /page-game -->
 
 
-<!-- ==================================================
+<!-- ================================================
      PAGE : RÉCOMPENSES
-================================================== -->
+================================================ -->
 <div id="page-rewards" class="page hidden">
 
   <button class="back-btn" onclick="afficherPage('page-dashboard')">← Retour</button>
@@ -701,223 +730,323 @@
 
   <div class="reward-card">
     <div class="reward-price">5 000 gold = 800 Robux</div>
-
     <img src="https://placehold.co/180x112/cc0000/ffffff?text=Roblox+Gift+Card"
-         alt="Carte cadeau Roblox"
+         alt="Carte Roblox"
          onerror="this.style.display='none'" />
-
     <div class="reward-window-box">
       📅 <strong>Fenêtre de retrait mensuelle :</strong>
       les retraits ne sont acceptés que pendant la <strong>semaine exclusive</strong>
       désignée chaque mois. Un seul retrait par personne et par mois est autorisé.
       Suivez nos réseaux sociaux pour connaître les dates.
     </div>
-
     <p style="font-size:13px; color:var(--muted); margin-top:4px;">
       Ton solde : <strong id="rewards-gold" style="color:var(--gold)">0</strong> gold
     </p>
-
     <button class="btn btn-green" style="margin-top:14px;" onclick="retirerRecompense()">
       Retirer 800 Robux
     </button>
-
     <div id="reward-msg" class="reward-msg hidden"></div>
   </div>
 
 </div><!-- /page-rewards -->
 
 
-<!-- ==================================================
+<!-- ================================================
      PAGE : CGU
-================================================== -->
+================================================ -->
 <div id="page-cgu" class="page hidden">
 
   <button class="back-btn" onclick="afficherPage('page-dashboard')">← Retour</button>
   <h2>📄 CGU</h2>
 
   <div class="card">
-
     <div class="cgu-section">
       <strong>1. Fonctionnement du service</strong>
       Les rewards sont financées par des publicités. Plus vous regardez des pubs,
       plus vous gagnez des récompenses. Le gold est également gagné en jouant aux
       mini-jeux (+5 gold par minute jouée) ou via les bonus promotionnels.
     </div>
-
     <div class="cgu-section">
       <strong>2. Nature du gold</strong>
       Le gold accumulé est strictement virtuel et ne possède aucune valeur monétaire réelle.
-      Il ne peut être échangé que contre les récompenses disponibles sur la plateforme
-      (ex. : Robux).
+      Il ne peut être échangé que contre les récompenses disponibles sur la plateforme.
     </div>
-
     <div class="cgu-section">
       <strong>3. Fenêtre de retrait mensuelle exclusive</strong>
-      Les retraits de récompenses ne sont autorisés que durant la
+      Les retraits ne sont autorisés que durant la
       <strong>semaine exclusive désignée chaque mois</strong> par REWARD WEB.
-      En dehors de cette période, aucune demande de retrait ne sera traitée.
-      Chaque utilisateur ne peut effectuer <strong>qu'un seul retrait par mois</strong>,
-      quelle que soit son accumulation de gold.
-      Les dates de la fenêtre mensuelle sont communiquées à l'avance via nos réseaux sociaux.
+      Chaque utilisateur ne peut effectuer <strong>qu'un seul retrait par mois</strong>.
+      Les dates sont communiquées via nos réseaux sociaux.
     </div>
-
     <div class="cgu-section">
       <strong>4. Traitement des retraits</strong>
-      Les retraits approuvés sont traités dans un délai de 24 h à 48 h suivant la validation.
-      REWARD WEB se réserve le droit de suspendre ou d'annuler un retrait en cas de fraude,
-      d'abus ou de non-respect des présentes CGU.
+      Les retraits approuvés sont traités sous 24 h à 48 h.
+      REWARD WEB peut suspendre un retrait en cas de fraude ou d'abus.
     </div>
-
     <div class="cgu-section">
       <strong>5. Conditions d'utilisation</strong>
-      En utilisant REWARD WEB, vous confirmez avoir plus de 13 ans et acceptez l'ensemble
-      des présentes conditions. REWARD WEB se réserve le droit de modifier ces CGU à tout
-      moment ; les modifications entrent en vigueur dès leur publication.
+      En utilisant REWARD WEB, vous confirmez avoir plus de 13 ans et acceptez
+      l'ensemble des présentes conditions.
     </div>
-
     <div class="cgu-section">
       <strong>6. Limitation de responsabilité</strong>
-      REWARD WEB ne saurait être tenu responsable de la perte de gold due à la suppression
-      de données de navigation. La plateforme est fournie "en l'état" sans garantie de
-      disponibilité permanente.
+      La progression est sauvegardée dans le cloud via Firebase.
+      REWARD WEB ne peut être tenu responsable d'une perte de données
+      liée à un problème externe.
     </div>
-
     <em style="color:var(--muted); font-size:12px;">Version 2.0 — 2025</em>
-
   </div>
 
 </div><!-- /page-cgu -->
 
 
-<!-- ==================================================
-     JAVASCRIPT
-================================================== -->
-<script>
+<!-- ================================================
+     FIREBASE SDK (CDN - pas de npm nécessaire)
+================================================ -->
+<script type="module">
 "use strict";
 
-/* ====================================================
-   CONSTANTES
-==================================================== */
-const PAGES    = ['page-login','page-dashboard','page-game','page-rewards','page-cgu'];
-const LS_GOLD  = 'rw_gold';
-const LS_CONN  = 'rw_connected';
-const LS_USER  = 'rw_user';
+/* ================================================
+   IMPORT FIREBASE
+================================================ */
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* ====================================================
-   GOLD
-==================================================== */
-let gold = parseInt(localStorage.getItem(LS_GOLD) || '0', 10);
+/* ================================================
+   CONFIG FIREBASE — Reward-Web
+================================================ */
+const firebaseConfig = {
+  apiKey:            "AIzaSyCAHQoJWJbixkdiMELM3NBCURafBl_ez4Q",
+  authDomain:        "reward-web-ba140.firebaseapp.com",
+  projectId:         "reward-web-ba140",
+  storageBucket:     "reward-web-ba140.firebasestorage.app",
+  messagingSenderId: "1057879174996",
+  appId:             "1:1057879174996:web:de0b247f1b91ac4c0922c1"
+};
 
-function sauvegarderGold() {
-  localStorage.setItem(LS_GOLD, gold);
-}
+/* ================================================
+   INITIALISATION
+================================================ */
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
-function majAffichageGold() {
-  const affichage = gold.toLocaleString('fr-FR');
-  const el1 = document.getElementById('gold-count');
-  const el2 = document.getElementById('rewards-gold');
-  if (el1) el1.textContent = affichage;
-  if (el2) el2.textContent = affichage;
-}
+/* ================================================
+   ÉTAT GLOBAL
+================================================ */
+const PAGES = [
+  'page-loading',
+  'page-login',
+  'page-dashboard',
+  'page-game',
+  'page-rewards',
+  'page-cgu'
+];
 
-function ajouterGold(montant) {
-  gold = Math.max(0, gold + montant);
-  sauvegarderGold();
-  majAffichageGold();
-  // Flash visuel si gain positif
-  if (montant > 0) {
-    const el = document.getElementById('gold-display');
-    if (el) {
-      el.classList.remove('flash');
-      void el.offsetWidth; // force reflow pour relancer l'animation
-      el.classList.add('flash');
-    }
-  }
-}
+let currentUser = null;  // utilisateur Firebase connecté
+let gold        = 0;     // gold en mémoire
 
-/* ====================================================
+/* ================================================
    NAVIGATION
-==================================================== */
+================================================ */
 function afficherPage(id) {
   PAGES.forEach(p => document.getElementById(p).classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
   if (id === 'page-rewards') majAffichageGold();
 }
+window.afficherPage = afficherPage;
 
-/* ====================================================
-   CONNEXION / DÉCONNEXION
-==================================================== */
-function simulerConnexion(provider) {
-  localStorage.setItem(LS_CONN, 'true');
-  localStorage.setItem(LS_USER, provider + ' User');
-  chargerDashboard();
+/* ================================================
+   TOAST NOTIFICATION
+================================================ */
+let toastTimer = null;
+
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className   = 'show ' + type;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
 }
 
-function chargerDashboard() {
-  const nom = localStorage.getItem(LS_USER) || 'Joueur';
-  document.getElementById('user-name').textContent = nom;
+/* ================================================
+   GOLD — Firestore
+================================================ */
+function majAffichageGold() {
+  const v = gold.toLocaleString('fr-FR');
+  const el1 = document.getElementById('gold-count');
+  const el2 = document.getElementById('rewards-gold');
+  if (el1) el1.textContent = v;
+  if (el2) el2.textContent = v;
+}
+
+function flashGold() {
+  const el = document.getElementById('gold-display');
+  if (!el) return;
+  el.classList.remove('flash');
+  void el.offsetWidth;
+  el.classList.add('flash');
+}
+
+async function ajouterGold(montant) {
+  gold = Math.max(0, gold + montant);
   majAffichageGold();
-  afficherPage('page-dashboard');
+  if (montant > 0) flashGold();
+  await sauvegarderGoldCloud();
 }
 
-function deconnecter() {
-  if (!confirm('Déconnexion ?\nTon gold est sauvegardé localement.')) return;
-  localStorage.removeItem(LS_CONN);
-  localStorage.removeItem(LS_USER);
-  location.reload();
+async function sauvegarderGoldCloud() {
+  if (!currentUser) return;
+  try {
+    const ref = doc(db, 'users', currentUser.uid);
+    await updateDoc(ref, {
+      gold:        gold,
+      lastUpdated: serverTimestamp()
+    });
+  } catch (e) {
+    console.warn('Erreur sauvegarde gold :', e);
+  }
 }
 
-/* ====================================================
+async function chargerGoldCloud() {
+  if (!currentUser) return;
+  try {
+    const ref  = doc(db, 'users', currentUser.uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      gold = snap.data().gold || 0;
+    } else {
+      // Première connexion → créer le document
+      await setDoc(ref, {
+        uid:         currentUser.uid,
+        email:       currentUser.email,
+        displayName: currentUser.displayName,
+        gold:        0,
+        createdAt:   serverTimestamp(),
+        lastUpdated: serverTimestamp()
+      });
+      gold = 0;
+    }
+    majAffichageGold();
+  } catch (e) {
+    console.warn('Erreur chargement gold :', e);
+  }
+}
+
+/* ================================================
+   AUTHENTIFICATION GOOGLE
+================================================ */
+async function connexionGoogle() {
+  const provider = new GoogleAuthProvider();
+  try {
+    await signInWithPopup(auth, provider);
+    // onAuthStateChanged gère la suite automatiquement
+  } catch (e) {
+    console.error('Erreur connexion :', e);
+    showToast('❌ Connexion annulée', 'err');
+  }
+}
+window.connexionGoogle = connexionGoogle;
+
+async function deconnecter() {
+  if (!confirm('Déconnexion ?\nTon gold est sauvegardé dans le cloud.')) return;
+  stopToutJeu();
+  await signOut(auth);
+}
+window.deconnecter = deconnecter;
+
+/* Surveille l'état de connexion en temps réel */
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+
+    // Remplir les infos utilisateur
+    document.getElementById('user-name').textContent  = user.displayName || 'Joueur';
+    document.getElementById('user-email').textContent = user.email || '';
+
+    // Avatar
+    if (user.photoURL) {
+      const av = document.getElementById('user-avatar');
+      const ph = document.getElementById('user-avatar-placeholder');
+      av.src = user.photoURL;
+      av.classList.remove('hidden');
+      ph.classList.add('hidden');
+    } else {
+      const initiale = (user.displayName || 'J')[0].toUpperCase();
+      document.getElementById('user-avatar-placeholder').textContent = initiale;
+    }
+
+    // Charger le gold depuis Firestore
+    await chargerGoldCloud();
+
+    afficherPage('page-dashboard');
+
+  } else {
+    currentUser = null;
+    gold        = 0;
+    afficherPage('page-login');
+  }
+});
+
+/* ================================================
    PUB SIMULÉE
-==================================================== */
+================================================ */
 let pubEnCours = false;
 
-function regarderPub() {
+async function regarderPub() {
   if (pubEnCours) return;
   pubEnCours = true;
-
   const btn = document.getElementById('btn-pub');
-  btn.disabled = true;
+  btn.disabled    = true;
   btn.textContent = '⏳ Pub en cours... (2s)';
 
-  setTimeout(() => {
-    ajouterGold(20);
-    btn.disabled = false;
+  setTimeout(async () => {
+    await ajouterGold(20);
+    btn.disabled    = false;
     btn.textContent = '📺 Regarder pub (+20 gold)';
-    pubEnCours = false;
-    alert('✅ +20 gold ! Pub terminée.');
+    pubEnCours      = false;
+    showToast('✅ +20 gold ! Pub terminée.', 'gold');
   }, 2000);
 }
+window.regarderPub = regarderPub;
 
-/* ====================================================
-   TIMER JEU — +5 gold par minute CONSÉCUTIVE
-
-   Règle :
-   - Toutes les 60 secondes passées sans interruption
-     dans un jeu → +5 gold automatiquement.
-   - Si on quitte, perd ou relance → compteur remis à 0.
-   - Pas d'autre source de gold dans les jeux.
-==================================================== */
-let jeuActif    = false;
-let timerSecondes = 0;          // secondes écoulées depuis le début / dernier palier
-let timerInterval = null;       // setInterval 1s
+/* ================================================
+   TIMER JEU — +5 gold par minute consécutive
+================================================ */
+let jeuActif      = false;
+let timerSecondes = 0;
+let timerInterval = null;
 
 function demarrerTimerJeu() {
   timerSecondes = 0;
   _majBarreTimer();
   if (timerInterval) clearInterval(timerInterval);
 
-  timerInterval = setInterval(() => {
+  timerInterval = setInterval(async () => {
     if (!jeuActif) return;
     timerSecondes++;
-
     _majBarreTimer();
 
-    // Palier de 60s atteint → +5 gold, puis on repart pour une nouvelle minute
     if (timerSecondes >= 60) {
       timerSecondes = 0;
-      ajouterGold(5);
-      _majBarreTimer(); // reset visuel immédiat
+      await ajouterGold(5);
+      showToast('⏱ +5 gold pour 1 minute de jeu !', 'gold');
+      _majBarreTimer();
     }
   }, 1000);
 }
@@ -936,21 +1065,19 @@ function _majBarreTimer() {
   if (label) label.textContent = 60 - timerSecondes;
 }
 
-/* ====================================================
+/* ================================================
    GESTION DES JEUX
-==================================================== */
-let jeuActuel  = null;   // 'pong' | 'snake'
-let pongRAF    = null;   // requestAnimationFrame id
-let snakeTimer = null;   // setInterval id
+================================================ */
+let jeuActuel  = null;
+let pongRAF    = null;
+let snakeTimer = null;
 
 function lancerJeu(type) {
-  _stopToutJeu(); // arrêter proprement tout jeu en cours
-
+  stopToutJeu();
   jeuActuel = type;
   jeuActif  = true;
   afficherPage('page-game');
 
-  // Cacher les deux sets de contrôles
   document.getElementById('pong-controls').classList.add('hidden');
   document.getElementById('snake-controls').classList.add('hidden');
 
@@ -959,67 +1086,54 @@ function lancerJeu(type) {
     document.getElementById('game-info').textContent  =
       '▲▼ clavier ou boutons · si la balle dépasse ta raquette → game over';
     document.getElementById('pong-controls').classList.remove('hidden');
-    _initPong();
-
-  } else { // snake
+    initPong();
+  } else {
     document.getElementById('game-title').textContent = '🐍 Snake';
     document.getElementById('game-info').textContent  =
       'D-Pad ou flèches clavier · évite les murs et toi-même';
     document.getElementById('snake-controls').classList.remove('hidden');
-    _initSnake();
+    initSnake();
   }
 
   demarrerTimerJeu();
 }
+window.lancerJeu = lancerJeu;
 
 function quitterJeu() {
-  _stopToutJeu();
+  stopToutJeu();
   afficherPage('page-dashboard');
 }
+window.quitterJeu = quitterJeu;
 
-function _stopToutJeu() {
+function stopToutJeu() {
   jeuActif = false;
   stopTimerJeu();
-
   if (pongRAF)    { cancelAnimationFrame(pongRAF); pongRAF = null; }
   if (snakeTimer) { clearInterval(snakeTimer);     snakeTimer = null; }
-
-  // Retirer les écouteurs clavier
   document.onkeydown = null;
   document.onkeyup   = null;
 }
 
-/* ====================================================
+/* ================================================
    PONG
+   - Raquette joueur à droite
+   - Si la balle dépasse le joueur → game over
+   - Aucun gold lié au Pong (uniquement le timer 60s)
+================================================ */
+let pongDir = 0;
 
-   Règles :
-   - Raquette joueur à droite (contrôle clavier ou boutons).
-   - Raquette IA à gauche.
-   - Si la balle dépasse la raquette du JOUEUR (bord droit)
-     → game over pour le joueur.
-   - Si la balle sort du bord gauche (IA rate) → reset silencieux.
-   - Aucun gold donné par le Pong lui-même.
-==================================================== */
-let pongDir = 0; // -1 = haut, 0 = arrêt, 1 = bas
-
-function _initPong() {
+function initPong() {
   const canvas = document.getElementById('game-canvas');
   const ctx    = canvas.getContext('2d');
-  const W = canvas.width;
-  const H = canvas.height;
+  const W = canvas.width, H = canvas.height;
+  const PH = 60, PW = 12;
 
-  const PADDLE_H = 60;
-  const PADDLE_W = 12;
-
-  let bx  = W / 2;   let by  = H / 2;
-  let vx  = 4.5;     let vy  = 3;
-  let py  = H / 2 - PADDLE_H / 2; // joueur (droite)
-  let iy  = H / 2 - PADDLE_H / 2; // IA (gauche)
+  let bx = W/2, by = H/2, vx = 4.5, vy = 3;
+  let py = H/2 - PH/2;
+  let iy = H/2 - PH/2;
   let goEnCours = false;
-
   pongDir = 0;
 
-  // Clavier
   document.onkeydown = (e) => {
     if (e.key === 'ArrowUp')   { pongDir = -1; e.preventDefault(); }
     if (e.key === 'ArrowDown') { pongDir =  1; e.preventDefault(); }
@@ -1029,7 +1143,7 @@ function _initPong() {
   };
 
   function resetBalle() {
-    bx = W / 2; by = H / 2;
+    bx = W/2; by = H/2;
     vx = (Math.random() > .5 ? 1 : -1) * 4.5;
     vy = (Math.random() > .5 ? 1 : -1) * 3.0;
   }
@@ -1042,92 +1156,59 @@ function _initPong() {
     cancelAnimationFrame(pongRAF); pongRAF = null;
 
     setTimeout(() => {
-      const rejouer = confirm('💥 Game Over ! La balle a dépassé ta raquette.\n(Aucun gold perdu)\n\nRejouer ?');
-      if (rejouer) {
-        lancerJeu('pong');
-      } else {
-        quitterJeu();
-      }
+      const rejouer = confirm('💥 Game Over !\nLa balle a dépassé ta raquette.\n\nRejouer ?');
+      if (rejouer) lancerJeu('pong');
+      else         quitterJeu();
     }, 60);
   }
 
   function loop() {
     if (!jeuActif || jeuActuel !== 'pong' || goEnCours) return;
 
-    // --- Déplacement joueur ---
-    py = Math.max(0, Math.min(H - PADDLE_H, py + pongDir * 5));
+    py = Math.max(0, Math.min(H - PH, py + pongDir * 5));
 
-    // --- IA suit la balle ---
-    const mid = iy + PADDLE_H / 2;
-    if (mid < by - 3) iy = Math.min(H - PADDLE_H, iy + 3.2);
-    if (mid > by + 3) iy = Math.max(0,             iy - 3.2);
+    const mid = iy + PH / 2;
+    if (mid < by - 3) iy = Math.min(H - PH, iy + 3.2);
+    if (mid > by + 3) iy = Math.max(0,       iy - 3.2);
 
-    // --- Mouvement balle ---
-    bx += vx;
-    by += vy;
+    bx += vx; by += vy;
 
-    // Murs haut / bas
     if (by <= 6)     { by = 6;     vy =  Math.abs(vy); }
     if (by >= H - 6) { by = H - 6; vy = -Math.abs(vy); }
 
-    // Collision raquette joueur (droite)
-    if (vx > 0 && bx >= W - PADDLE_W - 14
-        && by >= py && by <= py + PADDLE_H) {
+    // Raquette joueur (droite)
+    if (vx > 0 && bx >= W - PW - 14 && by >= py && by <= py + PH) {
       vx = -(Math.abs(vx) + 0.2);
       vy += (Math.random() - .5) * 1.5;
-      bx  = W - PADDLE_W - 15; // empêche chevauchement
+      bx  = W - PW - 15;
     }
-
-    // Collision raquette IA (gauche)
-    if (vx < 0 && bx <= PADDLE_W + 14
-        && by >= iy && by <= iy + PADDLE_H) {
+    // Raquette IA (gauche)
+    if (vx < 0 && bx <= PW + 14 && by >= iy && by <= iy + PH) {
       vx = Math.abs(vx) + 0.15;
-      bx = PADDLE_W + 15;
+      bx = PW + 15;
     }
 
-    // Balle sort côté gauche → IA rate → reset (pas de gold)
-    if (bx < 0) {
-      resetBalle();
-    }
+    if (bx < 0) { resetBalle(); }   // IA rate → reset
+    if (bx > W) { gameOverPong(); return; } // joueur rate → game over
 
-    // Balle sort côté droit → JOUEUR a raté → GAME OVER
-    if (bx > W) {
-      gameOverPong();
-      return;
-    }
-
-    // --- Rendu ---
+    // Rendu
     ctx.fillStyle = '#111';
     ctx.fillRect(0, 0, W, H);
 
-    // Ligne centrale pointillée
     ctx.save();
     ctx.setLineDash([6, 8]);
-    ctx.strokeStyle = '#2a2a2a';
-    ctx.lineWidth   = 2;
-    ctx.beginPath();
-    ctx.moveTo(W / 2, 0);
-    ctx.lineTo(W / 2, H);
-    ctx.stroke();
+    ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
     ctx.restore();
 
-    // Raquette joueur (or)
     ctx.fillStyle = '#ffd700';
-    ctx.beginPath();
-    ctx.roundRect(W - PADDLE_W - 10, py, PADDLE_W, PADDLE_H, 4);
-    ctx.fill();
+    ctx.beginPath(); ctx.roundRect(W - PW - 10, py, PW, PH, 4); ctx.fill();
 
-    // Raquette IA (rouge)
     ctx.fillStyle = '#e74c3c';
-    ctx.beginPath();
-    ctx.roundRect(10, iy, PADDLE_W, PADDLE_H, 4);
-    ctx.fill();
+    ctx.beginPath(); ctx.roundRect(10, iy, PW, PH, 4); ctx.fill();
 
-    // Balle
     ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(bx, by, 8, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI * 2); ctx.fill();
 
     pongRAF = requestAnimationFrame(loop);
   }
@@ -1136,50 +1217,38 @@ function _initPong() {
   pongRAF = requestAnimationFrame(loop);
 }
 
-/* ====================================================
+/* ================================================
    SNAKE
-
-   Règles :
-   - La mort (mur ou soi-même) → game over, 0 gold.
-   - Aucun gold lié aux nourritures ou à la mort.
-   - Les seuls gold en jeu viennent du timer 60s.
-
-   snakeCurrDir / snakeNextDir sont GLOBALES pour que
-   setSnakeDir() soit accessible depuis l'HTML.
-==================================================== */
+   - snakeCurrDir / snakeNextDir : globales
+   - 0 gold à la mort
+   - Seul le timer 60s donne du gold
+================================================ */
 let snakeCurrDir = { x: 1, y: 0 };
 let snakeNextDir = { x: 1, y: 0 };
 
-/**
- * Appelée par les boutons du D-Pad (inline onmousedown / ontouchstart).
- * Fonction globale — ne pas déplacer dans une portée locale.
- */
 function setSnakeDir(dx, dy) {
-  // Bloquer le demi-tour immédiat
   if (dx !== 0 && snakeCurrDir.x !== 0) return;
   if (dy !== 0 && snakeCurrDir.y !== 0) return;
   snakeNextDir = { x: dx, y: dy };
 }
+window.setSnakeDir = setSnakeDir;
 
-function _initSnake() {
+function initSnake() {
   const canvas = document.getElementById('game-canvas');
   const ctx    = canvas.getContext('2d');
+  const COLS = 20, ROWS = 18;
+  const TW = Math.floor(canvas.width / COLS);
+  const TH = Math.floor(canvas.height / ROWS);
 
-  const COLS = 20;
-  const ROWS = 18;
-  const TW   = Math.floor(canvas.width  / COLS);
-  const TH   = Math.floor(canvas.height / ROWS);
-
-  // Reset des directions globales
   snakeCurrDir = { x: 1, y: 0 };
   snakeNextDir = { x: 1, y: 0 };
 
   let serpent    = [{ x: 5, y: 9 }, { x: 4, y: 9 }, { x: 3, y: 9 }];
-  let nourriture = _nouvNourriture();
+  let nourriture = nouvNourriture();
   let score      = 0;
   let goEnCours  = false;
 
-  function _nouvNourriture() {
+  function nouvNourriture() {
     let f;
     do {
       f = {
@@ -1190,7 +1259,6 @@ function _initSnake() {
     return f;
   }
 
-  // Clavier Snake
   document.onkeydown = (e) => {
     switch (e.key) {
       case 'ArrowUp':    setSnakeDir( 0, -1); e.preventDefault(); break;
@@ -1201,27 +1269,19 @@ function _initSnake() {
   };
 
   function render() {
-    // Fond
     ctx.fillStyle = '#111';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Grille discrète
-    ctx.strokeStyle = '#1c1c1c';
-    ctx.lineWidth   = 0.5;
+    ctx.strokeStyle = '#1c1c1c'; ctx.lineWidth = 0.5;
     for (let c = 0; c < COLS; c++) {
       ctx.beginPath();
-      ctx.moveTo(c * TW, 0);
-      ctx.lineTo(c * TW, canvas.height);
-      ctx.stroke();
+      ctx.moveTo(c * TW, 0); ctx.lineTo(c * TW, canvas.height); ctx.stroke();
     }
     for (let r = 0; r < ROWS; r++) {
       ctx.beginPath();
-      ctx.moveTo(0, r * TH);
-      ctx.lineTo(canvas.width, r * TH);
-      ctx.stroke();
+      ctx.moveTo(0, r * TH); ctx.lineTo(canvas.width, r * TH); ctx.stroke();
     }
 
-    // Nourriture (cercle rouge)
     ctx.fillStyle = '#e74c3c';
     ctx.beginPath();
     ctx.arc(
@@ -1231,7 +1291,6 @@ function _initSnake() {
     );
     ctx.fill();
 
-    // Serpent
     serpent.forEach((seg, i) => {
       ctx.fillStyle = i === 0 ? '#2ecc71'
                     : (i % 2 === 0 ? '#27ae60' : '#229954');
@@ -1240,39 +1299,33 @@ function _initSnake() {
       ctx.fill();
     });
 
-    // Score
     ctx.fillStyle = 'rgba(255,215,0,.85)';
-    ctx.font      = 'bold 13px Segoe UI, Arial, sans-serif';
+    ctx.font      = 'bold 13px Segoe UI, Arial';
     ctx.fillText('Score : ' + score, 8, 18);
   }
 
   function step() {
     if (!jeuActif || jeuActuel !== 'snake' || goEnCours) return;
 
-    // Appliquer la direction demandée
     snakeCurrDir = { ...snakeNextDir };
-
     const tete = {
       x: serpent[0].x + snakeCurrDir.x,
       y: serpent[0].y + snakeCurrDir.y
     };
 
-    // Collision mur
     if (tete.x < 0 || tete.x >= COLS || tete.y < 0 || tete.y >= ROWS) {
-      _gameOverSnake(); return;
+      gameOverSnake(); return;
     }
-    // Collision corps (on ignore la queue qui va disparaître)
     if (serpent.slice(0, -1).some(s => s.x === tete.x && s.y === tete.y)) {
-      _gameOverSnake(); return;
+      gameOverSnake(); return;
     }
 
     serpent.unshift(tete);
 
-    // Mange la nourriture ?
     if (tete.x === nourriture.x && tete.y === nourriture.y) {
       score++;
-      nourriture = _nouvNourriture();
-      // Pas de gold ici — uniquement le timer 60s donne du gold
+      nourriture = nouvNourriture();
+      // Pas de gold ici — uniquement le timer 60s
     } else {
       serpent.pop();
     }
@@ -1280,22 +1333,19 @@ function _initSnake() {
     render();
   }
 
-  function _gameOverSnake() {
+  function gameOverSnake() {
     goEnCours = true;
     clearInterval(snakeTimer); snakeTimer = null;
     jeuActif = false;
-    stopTimerJeu(); // remet le compteur à 0 — pas de gold partiel
+    stopTimerJeu(); // compteur remis à 0, pas de gold partiel
 
     setTimeout(() => {
       const rejouer = confirm(
         '💀 Game Over !\nScore : ' + score +
         '\n(Aucun gold pour une partie perdue)\n\nRejouer ?'
       );
-      if (rejouer) {
-        lancerJeu('snake'); // relance avec timer remis à 0
-      } else {
-        quitterJeu();
-      }
+      if (rejouer) lancerJeu('snake');
+      else         quitterJeu();
     }, 80);
   }
 
@@ -1304,10 +1354,10 @@ function _initSnake() {
   snakeTimer = setInterval(step, 130);
 }
 
-/* ====================================================
+/* ================================================
    RÉCOMPENSES
-==================================================== */
-function retirerRecompense() {
+================================================ */
+async function retirerRecompense() {
   const msg = document.getElementById('reward-msg');
   msg.classList.remove('hidden', 'ok', 'err');
 
@@ -1317,27 +1367,17 @@ function retirerRecompense() {
       '❌ Gold insuffisant ! Il te faut 5 000 gold'
       + ' (tu en as ' + gold.toLocaleString('fr-FR') + ').';
   } else {
-    ajouterGold(-5000);
+    await ajouterGold(-5000);
     msg.classList.add('ok');
     msg.textContent =
       '✅ Retrait demandé ! Tu recevras tes Robux'
-      + ' durant la fenêtre de retrait mensuelle (sous 24–48 h).';
+      + ' durant la fenêtre mensuelle (24–48 h).';
   }
 
   setTimeout(() => msg.classList.add('hidden'), 5000);
 }
+window.retirerRecompense = retirerRecompense;
 
-/* ====================================================
-   INITIALISATION
-==================================================== */
-(function init() {
-  if (localStorage.getItem(LS_CONN) === 'true') {
-    chargerDashboard();
-  } else {
-    afficherPage('page-login');
-  }
-}());
 </script>
-
 </body>
 </html>
